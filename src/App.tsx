@@ -1,60 +1,37 @@
-import { Layout, Menu } from "antd";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { createUseStyles } from "react-jss";
+import React, {lazy, Suspense} from "react";
+import {useTranslation} from "react-i18next";
+import "./APP.css"
+import {Route, Switch} from 'react-router-dom';
+import SideBar from "./components/SideBar";
+import Header from "./components/Header";
+import Loading from "./components/Loading";
+import styled from "styled-components";
+const Bridge = lazy(() => import('./page/Bridge'))
+const History = lazy(() => import('./page/History/History'))
+const Vault = lazy(() => import('./page/Vault/Vault'))
 
-const { Header, Content, Footer, Sider } = Layout;
-const useStyles = createUseStyles({
-  layout: {
-    display: "flex",
-  },
-  logo: {
-    float: "left",
-    width: 120,
-    height: 31,
-    margin: [16, 24, 16, 0],
-    background: [255, 255, 255, 0.3],
-  },
-  siteLayoutBackground: {
-    background: "#fff",
-  },
-  Menu: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#8e8e8e",
-    marginBottom: 36,
-  },
-});
-
+const LayoutWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`
 export const App: React.FC = () => {
-  const { t } = useTranslation();
-  const classes = useStyles();
-  return (
-    <Layout className={classes.layout}>
-      <Header>
-        <div className={classes.logo} />
-      </Header>
-      <Layout>
-        <Sider width={200} className={classes.siteLayoutBackground}>
-          <Menu
-            className={classes.Menu}
-            mode="inline"
-            defaultSelectedKeys={["bridge"]}
-            style={{ height: "100vh", borderRight: 0 }}
-          >
-            <Menu.Item key="bridge">{t("bridge")}</Menu.Item>
-            <Menu.Item key="history">{t("histroy")}</Menu.Item>
-            <Menu.Item key="vault">{t("vault")}</Menu.Item>
-          </Menu>
-        </Sider>
-      </Layout>
-      <Content
-        className="site-layout-background"
-        style={{ padding: 24, margin: 0, minHeight: 280 }}
-      ></Content>
-    </Layout>
-  );
+    const {t} = useTranslation();
+    return (
+        <>
+
+            <SideBar/>
+            <LayoutWrapper id={"LayoutWrapper"}>
+                <Header/>
+                <main>
+                    <Suspense fallback={<Loading/>}>
+                        <Switch>
+                            <Route path="/" exact component={Bridge}/>
+                            <Route path="/history" component={History}/>
+                            <Route path="/vault" component={Vault}/>
+                        </Switch>
+                    </Suspense>
+                </main>
+            </LayoutWrapper>
+        </>
+    );
 };
