@@ -65,3 +65,17 @@ table {
     border-color: #F6C94A;
     box-shadow: none !important;
 }
+.ant-btn{
+    background: #F6C94A;
+    font-size: 14px;
+    color: #282828;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+}
+.ant-btn:focus, .ant-btn:active, .ant-btn:hover{
+    color: #282828;
+    background: #F6C94A;
+    border-color: #F6C94A;
+}
+

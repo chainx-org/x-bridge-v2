@@ -83,9 +83,15 @@ export const SideBarFooter = styled.footer`
   .bridge-doc{
     display: flex;
     width: 120px;
-    justify-content: space-between;
+    justify-content: space-around;
     font-size: 12px;
     color: #8E8E8E;
+    .point{
+      font-weight: bold;
+    }
+    li{
+      margin-left: 5px;
+    }
   }
   .social-media{
     margin-top: 19px;
@@ -102,8 +108,11 @@ export const SideBarFooter = styled.footer`
     color: #8E8E8E;
     justify-content: space-around;
     margin-top: 35px;
-    &.active{
-      color: #282828;
+    li{
+      cursor:pointer;
+      &.active{
+        color: #282828;
+      }
     }
   }
 `

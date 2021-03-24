@@ -2,8 +2,8 @@ import React, {lazy, Suspense} from "react";
 import {useTranslation} from "react-i18next";
 import "./APP.css"
 import {Route, Switch} from 'react-router-dom';
-import SideBar from "./components/SideBar/SideBar";
-import Header from "./components/Header/Header";
+import SideBar from "./components/SideBar";
+import Header from "./components/Header";
 import Loading from "./components/Loading";
 import styled from "styled-components";
 const Bridge = lazy(() => import('./page/Bridge'))
