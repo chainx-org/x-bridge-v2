@@ -63,7 +63,7 @@ export const LockingCollateralStyle = styled.div`
 
   .locking-tip {
     margin-left: 8px;
-    width: 72px;
+    padding: 0 4px;
     height: 20px;
     background: #FDF5E0;
     border-radius: 4px;
@@ -77,17 +77,20 @@ export const IssueFooterStyle = styled.footer`
   display: flex;
   flex-direction: column;
   align-items: center;
+
   .issue-footer-title {
     font-size: 12px;
     color: #282828;
   }
-  .issue-footer-num{
+
+  .issue-footer-num {
     font-size: 24px;
     color: #282828;
-    margin-top: 4px;
+    margin-top: 8px;
   }
-  button{
-    width:419px;
+
+  button {
+    width: 419px;
     height: 44px;
     margin-top: 20px;
   }

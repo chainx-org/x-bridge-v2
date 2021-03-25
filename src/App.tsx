@@ -8,7 +8,7 @@ import Loading from "./components/Loading";
 import styled from "styled-components";
 const Bridge = lazy(() => import('./page/Bridge'))
 const History = lazy(() => import('./page/History/History'))
-const Vault = lazy(() => import('./page/Vault/Vault'))
+const Vault = lazy(() => import('./page/Vault'))
 
 const LayoutWrapper = styled.div`
   display: flex;

@@ -1,21 +1,11 @@
 import styled from "styled-components";
 
-export const BridgeStyle = styled.div`
-  display: flex;
-  justify-content: space-between;
-`
-export const BridgeCardStyle = styled.div`
-  width: 499px;
-  height: 524px;
-  border-radius: 10px;
-  background: #fff;
+export const HistoryStyle = styled.div`
   margin: 24px;
-  border: 1px solid #EFEFEF;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background: #fff;
+  height: 100%;
+  padding: 30px;
 `
-
 export const FunctionSwitchButton = styled.div`
   font-size: 16px;
   font-weight: bold;
@@ -42,4 +32,10 @@ export const FunctionSwitchButton = styled.div`
       color: #282828;
     }
   };
+`
+export const TableStyle = styled.div`
+ margin-top: 36px;
+  .ant-table-cell{
+    background: #fff;
+  }
 `
