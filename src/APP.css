@@ -125,3 +125,15 @@ border-color: #f6c94a;
     color: #282828;
     font-weight: bold;
 }
+.ant-radio-checked .ant-radio-inner{
+   border-color: #f6c94a
+}
+.ant-radio:hover .ant-radio-inner, .ant-radio-input:focus + .ant-radio-inner{
+    border-color: #f6c94a
+}
+.ant-radio-checked::after{
+    border: #f6c94a;
+}
+.ant-radio-inner::after {
+    background: #f6c94a;
+}
