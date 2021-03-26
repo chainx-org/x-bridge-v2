@@ -70,5 +70,4 @@ export const CollateralStyle = styled.div`
 export const AgreementStyle = styled.div`
   font-size: 12px;
   color: #282828;
-  margin-top: 40px;
 `

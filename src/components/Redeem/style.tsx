@@ -40,7 +40,7 @@ export const XBtcBalanceStyle = styled.div`
   font-weight: bold;
 `
 export const BtcAddressStyle = styled.div`
-  margin-top: 40px;
+  margin-top:16px;
   .btc-address-info{
     display: flex;
     justify-content: space-between;

@@ -1,8 +1,22 @@
-import React from "react";
-import {EarnCardStyle, EarnCardTopStyle} from "./style";
-import {Button, Divider} from "antd";
+import React, {useState} from "react";
+import {
+    AddCollateralInput,
+    AddCollateralModalStyle,
+    CollateralDisplayStyle,
+    EarnCardStyle,
+    EarnCardTopStyle
+} from "./style";
+import {Button, Divider, InputNumber, Modal} from "antd";
+import {useTranslation} from "react-i18next";
+import arrowLogo from './icons/arrow.svg'
 
 function EarnCard() {
+    const {t} = useTranslation()
+    const [AddCollateralModal,SetAddCollateralModal] = useState(false)
+    const AddCollateralHandle = ()=> {
+        alert('添加了抵押品')
+        SetAddCollateralModal(false)
+    }
     return (
         <EarnCardStyle>
             <EarnCardTopStyle>
@@ -43,9 +57,44 @@ function EarnCard() {
                 </ul>
             </EarnCardTopStyle>
             <Divider/>
-            <Button>
-                增加抵押品
+            <Button onClick={()=> {SetAddCollateralModal(true)}}>
+                {t('adding collateral')}
             </Button>
+            <AddCollateralModalStyle>
+                <Modal title={t('adding collateral')} visible={AddCollateralModal} onCancel={()=> SetAddCollateralModal(false)}
+                       footer={[
+                           <Button onClick={()=>SetAddCollateralModal(false)}>
+                               取消
+                           </Button>,
+                           <Button onClick={AddCollateralHandle}>
+                              确认
+                           </Button>,
+                       ]}
+                >
+                    <AddCollateralInput>
+                        <div className={"addCollateral-info"}>
+                            <div className={"addCollateral-title"}>{t('adding collateral')}</div>
+                            <div className={"addCollateral-amount"}>余额：568054.95 PCX</div>
+                        </div>
+                        <InputNumber/>
+                    </AddCollateralInput>
+                    <CollateralDisplayStyle>
+                        <ul>
+                            <li>
+                                <div>当前抵押率</div>
+                                <div className={"collateral-num"}>300%</div>
+                            </li>
+                            <li>
+                                <img src={arrowLogo} alt=""/>
+                            </li>
+                            <li>
+                                <div>增加后抵押率</div>
+                                <div className={"collateral-num before"}>350%</div>
+                            </li>
+                        </ul>
+                    </CollateralDisplayStyle>
+                </Modal>
+            </AddCollateralModalStyle>
         </EarnCardStyle>
     )
 }
