@@ -1,5 +1,6 @@
 import React, {useState} from "react";
-import {FunctionSwitchButton, HistoryStyle, TableStyle} from "./style";
+import {HistoryCardStyle} from "./style";
+import {FunctionSwitchButton, TableStyle} from "../../../page/History/style";
 import {useTranslation} from "react-i18next";
 import {Table} from "antd";
 const columns = [
@@ -38,19 +39,19 @@ const data2 = [
         address: '赎回',
     },
 ];
-function History(){
+function HistoryCard(){
     const [HistoryStatus, SetHistoryStatus] = useState('issue')
     const {t} = useTranslation()
     return (
-        <HistoryStyle>
+        <HistoryCardStyle>
             <FunctionSwitchButton>
                 <ul>
                     <li onClick={() => {
                         SetHistoryStatus('issue')
-                    }} className={HistoryStatus === 'issue' ? "active" : ""}>{t('issue')}</li>
+                    }} className={HistoryStatus === 'issue' ? "active" : ""}>{t('Redemption list')}</li>
                     <li onClick={() => {
                         SetHistoryStatus('Redeem')
-                    }} className={HistoryStatus === 'Redeem' ? "active" : ""}>{t('Redeem')}</li>
+                    }} className={HistoryStatus === 'Redeem' ? "active" : ""}>{t('History')}</li>
                 </ul>
             </FunctionSwitchButton>
             <TableStyle>
@@ -59,7 +60,7 @@ function History(){
                     <Table columns={columns} dataSource={data2} />
                 }
             </TableStyle>
-        </HistoryStyle>
+        </HistoryCardStyle>
     )
 }
-export default History;
+export default HistoryCard
