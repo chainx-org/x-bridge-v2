@@ -1,0 +1,127 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+    background: #f9f9f9;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+#root {
+    min-height: 100vh;
+    display: flex;
+}
+#LayoutWrapper{
+    flex: 1;
+}
+.ant-input-handler-wrap{
+    display: none
+}
+.ant-input:hover{
+    border-color: #F6C94A;
+    border-right-width: 1px !important;
+}
+.ant-input:focus{
+    border-color: #F6C94A;
+    box-shadow: none !important;
+}
+.ant-input-focused{
+    border-color: #F6C94A;
+    box-shadow: none !important;
+}
+.ant-input-number-handler-wrap {
+    display: none
+}
+.ant-input-number:hover {
+    border-color: #F6C94A;
+    border-right-width: 1px !important;
+}
+.ant-input-number:focus {
+    border-color: #F6C94A;
+    box-shadow: none !important;
+}
+.ant-input-number-focused {
+    border-color: #F6C94A;
+    box-shadow: none !important;
+}
+.ant-btn{
+    background: #F6C94A;
+    font-size: 14px;
+    color: #282828;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+}
+.ant-btn:focus, .ant-btn:active, .ant-btn:hover{
+    color: #282828;
+    background: #F6C94A;
+    border-color: #F6C94A;
+}
+.ant-checkbox .ant-checkbox-inner {
+    border-color: #f6c94a; 
+}
+.ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #f6c94a; 
+border-color: #f6c94a;
+}
+.ant-checkbox-wrapper:hover .ant-checkbox-inner, .ant-checkbox:hover .ant-checkbox-inner, .ant-checkbox-input:focus + .ant-checkbox-inner {
+    border-color: #f6c94a;
+}
+.ant-checkbox-checked::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #f6c94a;
+    border-radius: 2px;
+    visibility: hidden;
+    -webkit-animation: antCheckboxEffect 0.36s ease-in-out;
+    animation: antCheckboxEffect 0.36s ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards;
+    content: '';
+}
+.ant-modal-title{
+    display: flex;
+   justify-content: center;
+    font-size: 20px;
+    color: #282828;
+    font-weight: bold;
+}

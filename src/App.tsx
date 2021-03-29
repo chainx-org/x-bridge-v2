@@ -1,26 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {lazy, Suspense, useEffect} from "react";
+import {useTranslation} from "react-i18next";
+import "./APP.css"
+import {Route, Switch} from 'react-router-dom';
+import SideBar from "./components/SideBar";
+import Header from "./components/Header";
+import Loading from "./components/Loading";
+import styled from "styled-components";
+import {web3Enable} from "@polkadot/extension-dapp";
+import {ApiPromise, WsProvider} from "@polkadot/api";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const Bridge = lazy(() => import('./page/Bridge'))
+const History = lazy(() => import('./page/History/History'))
+const Vault = lazy(() => import('./page/Vault'))
 
-export default App;
+const LayoutWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+export const App: React.FC = () => {
+    const {t} = useTranslation();
+    useEffect(() => {
+        const provider = new WsProvider("wss://xbridge.spiderx.pro/ws");
+        ApiPromise.create({provider}).then(api => {
+            console.dir(api);
+        })
+        // web3Enable("x-bridge").then(data => {
+        //     console.dir(data)
+        // })
+    }, [])
+    return (
+        <>
+
+            <SideBar />
+            <LayoutWrapper id={"LayoutWrapper"}>
+                <Header />
+                <main>
+                    <Suspense fallback={<Loading />}>
+                        <Switch>
+                            <Route path="/" exact component={Bridge} />
+                            <Route path="/history" component={History} />
+                            <Route path="/vault" component={Vault} />
+                        </Switch>
+                    </Suspense>
+                </main>
+            </LayoutWrapper>
+        </>
+    );
+};
