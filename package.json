@@ -1,12 +1,15 @@
 {
   "name": "x-bridge-v2",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "license": "Apache-2",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview"
   },
   "dependencies": {
+    "@polkadot/api": "^4.2.1",
+    "@polkadot/typegen": "^4.2.1",
     "antd": "^4.14.1",
     "i18next": "^20.0.0",
     "react": "^17.0.0",

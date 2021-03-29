@@ -6,6 +6,7 @@ import SideBar from "./components/SideBar";
 import Header from "./components/Header";
 import Loading from "./components/Loading";
 import styled from "styled-components";
+import useApi from './hooks/useApi'
 const Bridge = lazy(() => import('./page/Bridge'))
 const History = lazy(() => import('./page/History/History'))
 const Vault = lazy(() => import('./page/Vault'))
@@ -15,6 +16,7 @@ const LayoutWrapper = styled.div`
   flex-direction: column;
 `
 export const App: React.FC = () => {
+    // const isReady = useApi()
     const {t} = useTranslation();
     return (
         <>
