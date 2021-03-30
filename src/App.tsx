@@ -8,15 +8,21 @@ import Loading from "./components/Loading";
 import styled from "styled-components";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ApiContext, ApiInfo, useApi } from "./hooks/useApi";
-import definitions from "./interfaces";
+import * as definitions from "./interfaces/definitions";
 import { notification } from "antd";
 import useAccountModel from "./hooks/useAccountModel";
+import { Keyring } from "@polkadot/ui-keyring";
+import { hexToU8a, isHex } from "@polkadot/util";
 import {
   web3Accounts,
   web3AccountsSubscribe,
   web3Enable,
-  web3FromAddress,
 } from "@polkadot/extension-dapp";
+import {
+  IssueRequestsContext,
+  IssueRequestRow,
+} from "./hooks/useIssueRequests";
+import { IssueRequest, RequestId } from "./interfaces";
 
 const Bridge = lazy(() => import("./page/Bridge"));
 const History = lazy(() => import("./page/History/History"));
@@ -33,6 +39,11 @@ export const App: React.FC = () => {
   // Api Context
   const [api, setApi] = useState<ApiPromise | null>(null);
   const [isApiReady, setApiReady] = useState(false);
+
+  // Issue requests context
+  const [issueRequests, setIssueRequests] = useState<IssueRequestRow[]>([]);
+  // Redeem requests context
+  // const [issueRequests, setIssueRequests] = useState<IssueRequest[]>([]);
 
   // Accounts Context
   const accountModel = useAccountModel();
@@ -53,17 +64,40 @@ export const App: React.FC = () => {
     );
     api.on("disconnected", () => setApiReady(false));
     api.on("ready", () => {
-      setApiReady(true);
       setApi(api);
+      setApiReady(true);
       notification.info({ message: "Endpoint connected." });
     });
   }, []);
+
+  useEffect(() => {
+    if (isApiReady) {
+      api!!.query.xGatewayBitcoinV2.issueRequests.entries().then((data) => {
+        setIssueRequests(
+          data.map(([requestId, value]) => ({
+            id: requestId.args[0],
+            ...value.unwrap(),
+          }))
+        );
+      });
+
+      api!!.rpc.chain.subscribeNewHeads(async () => {
+        api!!.query.xGatewayBitcoinV2.issueRequests.entries().then((data) => {
+          setIssueRequests(
+            data.map(([requestId, value]) => ({
+              id: requestId.args[0],
+              ...value.unwrap(),
+            }))
+          );
+        });
+      });
+    }
+  }, [isApiReady]);
 
   // Init accounts
   useEffect(() => {
     web3Enable("X bridge").then(async () => {
       const accounts = await web3Accounts();
-      console.dir(accounts);
       accountModel.setAccounts(
         accounts.map(({ address, meta: { name } }) => ({
           name,
@@ -92,16 +126,22 @@ export const App: React.FC = () => {
             isApiReady,
           }}
         >
-          <Header />
-          <main>
-            <Suspense fallback={<Loading />}>
-              <Switch>
-                <Route path="/" exact component={Bridge} />
-                <Route path="/history" component={History} />
-                <Route path="/vault" component={Vault} />
-              </Switch>
-            </Suspense>
-          </main>
+          <IssueRequestsContext.Provider
+            value={{
+              requests: [],
+            }}
+          >
+            <Header />
+            <main>
+              <Suspense fallback={<Loading />}>
+                <Switch>
+                  <Route path="/" exact component={Bridge} />
+                  <Route path="/history" component={History} />
+                  <Route path="/vault" component={Vault} />
+                </Switch>
+              </Suspense>
+            </main>
+          </IssueRequestsContext.Provider>
         </ApiContext.Provider>
       </LayoutWrapper>
     </>
