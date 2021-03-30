@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { SelectAccountStyle } from "./style";
 import buttonLogo from "./icons/Account Settings.svg";
 import { Modal, Radio } from "antd";
+import useAccountModel from "../../../hooks/useAccountModel";
 function SelectAccount() {
   const [AccountListModal, SetAccountListModal] = useState(false);
-  const [value, setValue] = React.useState(1);
+  const [value, setValue] = useState(1);
+  const { currentAccount } = useAccountModel();
 
   return (
     <SelectAccountStyle>

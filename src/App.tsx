@@ -62,10 +62,22 @@ export const App: React.FC = () => {
   // Init accounts
   useEffect(() => {
     web3Enable("X bridge").then(async () => {
-      const allAccount = await web3Accounts();
-      accountModel.setAccounts(allAccount.map(({ address }) => address));
+      const accounts = await web3Accounts();
+      console.dir(accounts);
+      accountModel.setAccounts(
+        accounts.map(({ address, meta: { name } }) => ({
+          name,
+          address,
+        }))
+      );
+
       web3AccountsSubscribe((accounts) => {
-        accountModel.setAccounts(accounts.map(({ address }) => address));
+        accountModel.setAccounts(
+          accounts.map(({ address, meta: { name } }) => ({
+            name,
+            address,
+          }))
+        );
       });
     });
   }, []);
