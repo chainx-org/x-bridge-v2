@@ -46,8 +46,10 @@ export const App: React.FC = () => {
     notification.warn({ message: "Wait ws connecting..." });
     const provider = new WsProvider("wss://xbridge.spiderx.pro/ws");
     const api = new ApiPromise({ provider, types });
-    api.on("error", () =>
-      notification.error({ message: "Cannot connect to ws endpoint." })
+    api.on("error", (err) =>
+      notification.error({
+        message: `Cannot connect to ws endpoint. Error: ${err}`,
+      })
     );
     api.on("disconnected", () => setApiReady(false));
     api.on("ready", () => {

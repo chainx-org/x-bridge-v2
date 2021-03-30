@@ -1542,7 +1542,7 @@
     "@polkadot/x-rxjs" "^6.0.5"
     bn.js "^4.11.9"
 
-"@polkadot/api@4.2.1", "@polkadot/api@^4.2.1":
+"@polkadot/api@4.2.1", "@polkadot/api@=4.2.1":
   version "4.2.1"
   resolved "https://registry.npm.taobao.org/@polkadot/api/download/@polkadot/api-4.2.1.tgz#8eb0997dc148a34a4aca3a0dcaabad9954565909"
   integrity sha1-jrCZfcFIo0pKyjoNyqutmVRWWQk=
@@ -1599,18 +1599,6 @@
     "@polkadot/util-crypto" "^6.0.5"
     bn.js "^4.11.9"
 
-"@polkadot/metadata@4.2.2-4", "@polkadot/metadata@4.3.1":
-  version "4.2.2-4"
-  resolved "https://registry.npm.taobao.org/@polkadot/metadata/download/@polkadot/metadata-4.2.2-4.tgz#0f6e9c6ce51cfc9a5d801bbc7d55614b53581133"
-  integrity sha1-D26cbOUc/JpdgBu8fVVhS1NYETM=
-  dependencies:
-    "@babel/runtime" "^7.13.10"
-    "@polkadot/types" "4.2.2-4"
-    "@polkadot/types-known" "4.2.2-4"
-    "@polkadot/util" "^6.0.5"
-    "@polkadot/util-crypto" "^6.0.5"
-    bn.js "^4.11.9"
-
 "@polkadot/networks@5.9.2":
   version "5.9.2"
   resolved "https://registry.npm.taobao.org/@polkadot/networks/download/@polkadot/networks-5.9.2.tgz#c687525b5886c9418f75240afe22b562ed88e2dd"
@@ -1663,50 +1651,13 @@
     "@polkadot/util" "^6.0.5"
     bn.js "^4.11.9"
 
-"@polkadot/types-known@4.2.2-4":
-  version "4.2.2-4"
-  resolved "https://registry.npm.taobao.org/@polkadot/types-known/download/@polkadot/types-known-4.2.2-4.tgz#7e2ab9f68adc918976d707a71201807056cb27c0"
-  integrity sha1-fiq59orckYl21wenEgGAcFbLJ8A=
-  dependencies:
-    "@babel/runtime" "^7.13.10"
-    "@polkadot/networks" "^6.0.5"
-    "@polkadot/types" "4.2.2-4"
-    "@polkadot/util" "^6.0.5"
-    bn.js "^4.11.9"
-
-"@polkadot/types@4.2.1":
+"@polkadot/types@4.2.1", "@polkadot/types@=4.2.1":
   version "4.2.1"
   resolved "https://registry.npm.taobao.org/@polkadot/types/download/@polkadot/types-4.2.1.tgz#7be97d3abda4bb3f9031b43602062ed464596696"
   integrity sha1-e+l9Or2kuz+QMbQ2AgYu1GRZZpY=
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@polkadot/metadata" "4.2.1"
-    "@polkadot/util" "^6.0.5"
-    "@polkadot/util-crypto" "^6.0.5"
-    "@polkadot/x-rxjs" "^6.0.5"
-    "@types/bn.js" "^4.11.6"
-    bn.js "^4.11.9"
-
-"@polkadot/types@4.2.2-4":
-  version "4.2.2-4"
-  resolved "https://registry.npm.taobao.org/@polkadot/types/download/@polkadot/types-4.2.2-4.tgz#677e42d6d4cbd1cc5ea73aa7c897830bc77372f2"
-  integrity sha1-Z35C1tTL0cxepzqnyJeDC8dzcvI=
-  dependencies:
-    "@babel/runtime" "^7.13.10"
-    "@polkadot/metadata" "4.2.2-4"
-    "@polkadot/util" "^6.0.5"
-    "@polkadot/util-crypto" "^6.0.5"
-    "@polkadot/x-rxjs" "^6.0.5"
-    "@types/bn.js" "^4.11.6"
-    bn.js "^4.11.9"
-
-"@polkadot/types@^4.3.1":
-  version "4.3.1"
-  resolved "https://registry.npm.taobao.org/@polkadot/types/download/@polkadot/types-4.3.1.tgz#0e7a2a1354d5e16ed446ec0c7c84f7ffdadda1de"
-  integrity sha1-DnoqE1TV4W7URuwMfIT3/9rdod4=
-  dependencies:
-    "@babel/runtime" "^7.13.10"
-    "@polkadot/metadata" "4.3.1"
     "@polkadot/util" "^6.0.5"
     "@polkadot/util-crypto" "^6.0.5"
     "@polkadot/x-rxjs" "^6.0.5"
@@ -5862,7 +5813,7 @@ fsevents@^1.2.7:
     bindings "^1.5.0"
     nan "^2.12.1"
 
-fsevents@^2.1.2, fsevents@^2.1.3, fsevents@~2.3.1:
+fsevents@^2.1.2, fsevents@~2.3.1:
   version "2.3.2"
   resolved "https://registry.npm.taobao.org/fsevents/download/fsevents-2.3.2.tgz?cache=0&sync_timestamp=1612536512306&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ffsevents%2Fdownload%2Ffsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
   integrity sha1-ilJveLj99GI7cJ4Ll1xSwkwC/Ro=
@@ -10266,72 +10217,6 @@ react-router@5.2.0:
     react-is "^16.6.0"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
-
-react-scripts@4.0.3:
-  version "4.0.3"
-  resolved "https://registry.npm.taobao.org/react-scripts/download/react-scripts-4.0.3.tgz#b1cafed7c3fa603e7628ba0f187787964cb5d345"
-  integrity sha1-scr+18P6YD52KLoPGHeHlky100U=
-  dependencies:
-    "@babel/core" "7.12.3"
-    "@pmmmwh/react-refresh-webpack-plugin" "0.4.3"
-    "@svgr/webpack" "5.5.0"
-    "@typescript-eslint/eslint-plugin" "^4.5.0"
-    "@typescript-eslint/parser" "^4.5.0"
-    babel-eslint "^10.1.0"
-    babel-jest "^26.6.0"
-    babel-loader "8.1.0"
-    babel-plugin-named-asset-import "^0.3.7"
-    babel-preset-react-app "^10.0.0"
-    bfj "^7.0.2"
-    camelcase "^6.1.0"
-    case-sensitive-paths-webpack-plugin "2.3.0"
-    css-loader "4.3.0"
-    dotenv "8.2.0"
-    dotenv-expand "5.1.0"
-    eslint "^7.11.0"
-    eslint-config-react-app "^6.0.0"
-    eslint-plugin-flowtype "^5.2.0"
-    eslint-plugin-import "^2.22.1"
-    eslint-plugin-jest "^24.1.0"
-    eslint-plugin-jsx-a11y "^6.3.1"
-    eslint-plugin-react "^7.21.5"
-    eslint-plugin-react-hooks "^4.2.0"
-    eslint-plugin-testing-library "^3.9.2"
-    eslint-webpack-plugin "^2.5.2"
-    file-loader "6.1.1"
-    fs-extra "^9.0.1"
-    html-webpack-plugin "4.5.0"
-    identity-obj-proxy "3.0.0"
-    jest "26.6.0"
-    jest-circus "26.6.0"
-    jest-resolve "26.6.0"
-    jest-watch-typeahead "0.6.1"
-    mini-css-extract-plugin "0.11.3"
-    optimize-css-assets-webpack-plugin "5.0.4"
-    pnp-webpack-plugin "1.6.4"
-    postcss-flexbugs-fixes "4.2.1"
-    postcss-loader "3.0.0"
-    postcss-normalize "8.0.1"
-    postcss-preset-env "6.7.0"
-    postcss-safe-parser "5.0.2"
-    prompts "2.4.0"
-    react-app-polyfill "^2.0.0"
-    react-dev-utils "^11.0.3"
-    react-refresh "^0.8.3"
-    resolve "1.18.1"
-    resolve-url-loader "^3.1.2"
-    sass-loader "^10.0.5"
-    semver "7.3.2"
-    style-loader "1.3.0"
-    terser-webpack-plugin "4.2.3"
-    ts-pnp "1.2.0"
-    url-loader "4.1.1"
-    webpack "4.44.2"
-    webpack-dev-server "3.11.1"
-    webpack-manifest-plugin "2.2.0"
-    workbox-webpack-plugin "5.1.4"
-  optionalDependencies:
-    fsevents "^2.1.3"
 
 react@^17.0.2:
   version "17.0.2"
