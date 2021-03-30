@@ -7,7 +7,6 @@ import Header from "./components/Header";
 import Loading from "./components/Loading";
 import styled from "styled-components";
 import {web3Enable} from "@polkadot/extension-dapp";
-import {ApiPromise, WsProvider} from "@polkadot/api";
 
 const Bridge = lazy(() => import('./page/Bridge'))
 const History = lazy(() => import('./page/History/History'))
@@ -20,10 +19,6 @@ const LayoutWrapper = styled.div`
 export const App: React.FC = () => {
     const {t} = useTranslation();
     useEffect(() => {
-        const provider = new WsProvider("wss://xbridge.spiderx.pro/ws");
-        ApiPromise.create({provider}).then(api => {
-            console.dir(api);
-        })
         // web3Enable("x-bridge").then(data => {
         //     console.dir(data)
         // })
