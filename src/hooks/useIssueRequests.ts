@@ -1,5 +1,5 @@
 import { AccountId, Balance, BlockNumber } from "@polkadot/types/interfaces";
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import type { BtcAddress, IssueRequest, RequestId } from "../interfaces";
 
 export interface IssueRequestRow {
@@ -19,3 +19,5 @@ interface IssueRequestsContextProps {
 export const IssueRequestsContext = createContext(
   ({} as unknown) as IssueRequestsContextProps
 );
+
+export const useIssueRequests = () => useContext(IssueRequestsContext);
