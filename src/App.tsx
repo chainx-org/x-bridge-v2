@@ -34,6 +34,14 @@ const LayoutWrapper = styled.div`
   flex-direction: column;
 `;
 
+const MaskStyle = styled.div`
+  background: rgba(0,0,0,0.4);
+  position: fixed;
+  z-index: 2;
+  width: 100vw;
+  height: 100vh;
+`
+
 export const App: React.FC = () => {
   const { t } = useTranslation();
 
@@ -134,7 +142,7 @@ export const App: React.FC = () => {
         const tradingPrice = await api!!.query.xGatewayBitcoinV2.exchangeRate();
         setExchangeRate(tradingPrice);
 
-        api!!.rpc.chain.subscribeNewHeads(async () => {
+        await api!!.rpc.chain.subscribeNewHeads(async () => {
           const tradingPrice = await api!!.query.xGatewayBitcoinV2.exchangeRate();
           if (
               tradingPrice.price !== exchangeRate?.price ||
@@ -149,8 +157,8 @@ export const App: React.FC = () => {
 
   return (
       <>
-        {
-          isApiReady ? <><SideBar />
+        {!isApiReady ? <MaskStyle><Loading /></MaskStyle> : null}
+          <SideBar />
             <LayoutWrapper id={"LayoutWrapper"}>
               <ApiContext.Provider
                   value={{
@@ -181,8 +189,8 @@ export const App: React.FC = () => {
                   </FeeContext.Provider>
                 </IssueRequestsContext.Provider>
               </ApiContext.Provider>
-            </LayoutWrapper></> : null
-        }
+            </LayoutWrapper>
       </>
   );
-};
+}
+

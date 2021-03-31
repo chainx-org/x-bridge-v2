@@ -17,8 +17,10 @@ function VaultPage(){
             const status = await api.query.xGatewayBitcoinV2.vaults<Option<Vault>>(currentAccount?.address || "");
             setVault(status.isNone ? null : (status.value as Vault));
         }
-        GetStatus();
-    },[currentAccount])
+        if(isApiReady){
+            GetStatus()
+        }
+    },[currentAccount,isApiReady])
     return (
         <>
             {vault ? <VaultCard/> : <RegisterVaultCard/>}
