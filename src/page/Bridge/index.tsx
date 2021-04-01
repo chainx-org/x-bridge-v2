@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import {
   BridgeCardStyle,
   BridgeStyle,
@@ -25,6 +25,9 @@ import { Button, Modal } from "antd";
 import warningLogo from "./icons/redWarning.svg";
 import warningLogo2 from "./icons/warning2.svg";
 import { useTab } from "../../hooks/useTab";
+import {FeeContext} from "../../hooks/useFeeContext";
+import {IssueRequestsContext} from "../../hooks/useIssueRequests";
+import type {Json} from "@polkadot/types";
 
 enum Tab {
   Issue,
@@ -32,6 +35,8 @@ enum Tab {
 }
 
 function Bridge() {
+  const value = useContext(IssueRequestsContext)
+  console.log(JSON.parse(JSON.stringify(value)))  // 发行列表获取规则
   const [issueModalVisible, SetIssueModalVisible] = useState(false);
   const [RedeemModalVisible, SetRedeemModalVisible] = useState(false);
   const { t } = useTranslation();

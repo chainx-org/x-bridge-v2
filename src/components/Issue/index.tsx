@@ -9,12 +9,13 @@ import {
     LockingCollateralStyle, VaultAccountStyle
 } from "./style";
 import btcLogo from './icons/btc.svg'
-import {InputNumber, Divider, Button, Modal} from "antd";
+import {InputNumber, Divider, Button, Modal, notification} from "antd";
 import {useTranslation} from "react-i18next";
 import useAccountModel from "../../hooks/useAccountModel"
 import {useApi} from "../../hooks/useApi"
 import { IssueRequest, RequestId, TradingPrice, RpcVaultInfo} from "../../interfaces";
 import {FeeContext} from "../../hooks/useFeeContext";
+import {decodeAddress, encodeAddress} from "@polkadot/keyring";
 
 function Issue() {
     const value = useContext(FeeContext)
@@ -24,10 +25,47 @@ function Issue() {
     const [confirmationIssue, setConfirmationIssue] = useState(false)
     const [rpcVaultInfo, setRpcVaultInfo] = useState<RpcVaultInfo | null>(null);
     const [IssueAmount, setIssueAmount] = useState(0)
+    const [vaultAddress,setVaultAddress] = useState("")
+    const [vaultBtcAddress,setVaultBtcAddress] = useState("")
+    const [vaultButtonLoading,SetVaultButtonLoading] = useState(false)
     const { api, isApiReady } = useApi();
+
+    const unsub = async ()=> {
+        await api.tx.balances
+            .transfer("5HeCCrZENrAAbrVWGQ7sN5YPrBKptLuX8xMtwNe7eKsCXouP",123)
+            .signAndSend("5HRHgARNHuR57kEY2aqa7o8V5MVEYRRF2axd4T7G8LifFmEP",(result)=>{
+                console.log("resultStatus:" + result.status.asInBlock)
+            })
+    }
     const ConfirmationIssueTrade = (): void => {
-        alert('发了交易')
+        unsub();
+        api.tx.xGatewayBitcoinV2.requestIssue(vaultAddress,IssueAmount)
+
         setConfirmationIssue(false)
+    }
+    const handleMatchVault = async () => {
+        if(IssueAmount <= 0){
+            notification.warn({ message: "发行的值必须大于0" });
+            return
+        }
+            SetVaultButtonLoading(true)
+            const Array = [];
+            await api.query.xGatewayBitcoinV2.vaults.entries().then(
+                data => {
+                    if(data[0]){
+                        Array.push(data[0])
+                        Array.forEach(([key,value]) => {
+                            setVaultAddress(key.args.toString())
+                            setVaultBtcAddress(value.unwrap().wallet.toString())
+                            setConfirmationIssue(true)
+                            SetVaultButtonLoading(false)
+                        })
+                    }else{
+                        notification.warn({ message: "No matching vault found." });
+                        SetVaultButtonLoading(false)
+                    }
+                }
+            )
     }
     return (
         <IssueStyle>
@@ -61,11 +99,7 @@ function Issue() {
                 <div className={"issue-footer-num"}>
                     {IssueAmount} XBTC
                 </div>
-                <Button onClick={async ()=> {
-                    await api.query.xGatewayBitcoinV2.vaults.entries().then(data => data.forEach(([key, value]) => {
-
-                    }))
-                }}>
+                <Button loading={vaultButtonLoading} onClick={handleMatchVault}>
                     {t('next')}
                 </Button>
             </IssueFooterStyle>
@@ -98,11 +132,11 @@ function Issue() {
                     </ConfirmationIssueModalFooter>
                     <VaultAccountStyle>
                         <div>{t('Vault')}</div>
-                        <div className={"current-account"}>5HpAy3ahw2S7LvXWphebx3K1Nh9qw8hjEGbUXhG6wWRg1WBb</div>
+                        <div className={"current-account"}>{vaultAddress? encodeAddress(decodeAddress(vaultAddress),44) : ""}</div>
                     </VaultAccountStyle>
                     <VaultAccountStyle>
                         <div>{t('BTC address of Vault')}</div>
-                        <div className={"current-account"}>5HpAy3ahw2S7LvXWphebx3K1Nh9qw8hjEGbUXhG6wWRg1WBb</div>
+                        <div className={"current-account"}>{vaultBtcAddress}</div>
                     </VaultAccountStyle>
                 </Modal>
             </ConfirmationIssueModalStyle>
