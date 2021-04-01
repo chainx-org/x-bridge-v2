@@ -24,6 +24,7 @@ import {
 } from "./hooks/useIssueRequests";
 import { IssueRequest, RequestId, TradingPrice } from "./interfaces";
 import { FeeContext } from "./hooks/useFeeContext";
+import type {Percent} from "@polkadot/types/interfaces/runtime";
 
 const Bridge = lazy(() => import("./page/Bridge"));
 const History = lazy(() => import("./page/History/History"));
@@ -55,6 +56,8 @@ export const App: React.FC = () => {
   // const [issueRequests, setIssueRequests] = useState<IssueRequest[]>([]);
 
   const [exchangeRate, setExchangeRate] = useState<TradingPrice | null>(null);
+  const [percent, setPercent] =useState<Percent | null>(null)
+  const [pcxPrice,setPcxPrice] = useState<number | null>(null)
 
   // Accounts Context
   const accountModel = useAccountModel();
@@ -132,6 +135,8 @@ export const App: React.FC = () => {
             }))
         );
       });
+
+
     });
   }, []);
 
@@ -140,15 +145,26 @@ export const App: React.FC = () => {
     if (isApiReady) {
       (async () => {
         const tradingPrice = await api!!.query.xGatewayBitcoinV2.exchangeRate();
+        const percent = await api!!.query.xGatewayBitcoinV2.issueGriefingFee();
+        const price = +JSON.stringify(tradingPrice.price)
+        const decimal = +JSON.stringify(tradingPrice.decimal)
+        const mult = Math.pow(10,decimal)
+        setPercent(percent)
         setExchangeRate(tradingPrice);
-
+        setPcxPrice(price / mult)
         await api!!.rpc.chain.subscribeNewHeads(async () => {
           const tradingPrice = await api!!.query.xGatewayBitcoinV2.exchangeRate();
+          const percent = await api!!.query.xGatewayBitcoinV2.issueGriefingFee();
+          const price = +JSON.stringify(tradingPrice.price)
+          const decimal = +JSON.stringify(tradingPrice.decimal)
+          const mult = Math.pow(10,decimal)
           if (
               tradingPrice.price !== exchangeRate?.price ||
-              tradingPrice.decimal !== exchangeRate?.decimal
+              tradingPrice.decimal !== exchangeRate?.decimal || percent !== percent
           ) {
             setExchangeRate(tradingPrice);
+            setPercent(percent);
+            setPcxPrice(price / mult);
           }
         });
       })();
@@ -174,6 +190,8 @@ export const App: React.FC = () => {
                   <FeeContext.Provider
                       value={{
                         exchangeRate: exchangeRate!!,
+                        percent : percent!!,
+                        pcxPrice: pcxPrice!!
                       }}
                   >
                     <Header/>
