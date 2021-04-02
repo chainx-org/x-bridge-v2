@@ -36,7 +36,6 @@ enum Tab {
 
 function Bridge() {
   const value = useContext(IssueRequestsContext)
-  console.log(JSON.parse(JSON.stringify(value)))  // 发行列表获取规则
   const [issueModalVisible, SetIssueModalVisible] = useState(false);
   const [RedeemModalVisible, SetRedeemModalVisible] = useState(false);
   const { t } = useTranslation();

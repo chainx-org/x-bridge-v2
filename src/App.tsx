@@ -11,6 +11,7 @@ import { ApiContext, ApiInfo, useApi } from "./hooks/useApi";
 import * as definitions from "./interfaces/definitions";
 import { notification } from "antd";
 import useAccountModel from "./hooks/useAccountModel";
+import ChangeChainXAddress from "./util";
 import { Keyring } from "@polkadot/ui-keyring";
 import { hexToU8a, isHex } from "@polkadot/util";
 import {
@@ -25,6 +26,7 @@ import {
 import { IssueRequest, RequestId, TradingPrice } from "./interfaces";
 import { FeeContext } from "./hooks/useFeeContext";
 import type {Percent} from "@polkadot/types/interfaces/runtime";
+import {decodeAddress, encodeAddress} from "@polkadot/keyring";
 
 const Bridge = lazy(() => import("./page/Bridge"));
 const History = lazy(() => import("./page/History/History"));
@@ -116,14 +118,14 @@ export const App: React.FC = () => {
       if (accounts.length > 0) {
         accountModel.setCurrentAccount({
           name: accounts[0].meta.name,
-          address: accounts[0].address,
+          address: ChangeChainXAddress(accounts[0].address),
         });
       }
 
       accountModel.setAccounts(
           accounts.map(({ address, meta: { name } }) => ({
             name,
-            address,
+            address : encodeAddress(decodeAddress(address),44),
           }))
       );
 
@@ -131,7 +133,7 @@ export const App: React.FC = () => {
         accountModel.setAccounts(
             accounts.map(({ address, meta: { name } }) => ({
               name,
-              address,
+              address: encodeAddress(decodeAddress(address),44),
             }))
         );
       });

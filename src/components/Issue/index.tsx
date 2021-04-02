@@ -13,9 +13,12 @@ import {InputNumber, Divider, Button, Modal, notification} from "antd";
 import {useTranslation} from "react-i18next";
 import useAccountModel from "../../hooks/useAccountModel"
 import {useApi} from "../../hooks/useApi"
-import { IssueRequest, RequestId, TradingPrice, RpcVaultInfo} from "../../interfaces";
+import {IssueRequest, RequestId, TradingPrice, RpcVaultInfo} from "../../interfaces";
 import {FeeContext} from "../../hooks/useFeeContext";
 import {decodeAddress, encodeAddress} from "@polkadot/keyring";
+import ChangeChainXAddress from "../../util";
+import keyring from "@polkadot/ui-keyring";
+import {web3Accounts, web3FromAddress} from "@polkadot/extension-dapp";
 
 function Issue() {
     const value = useContext(FeeContext)
@@ -25,47 +28,53 @@ function Issue() {
     const [confirmationIssue, setConfirmationIssue] = useState(false)
     const [rpcVaultInfo, setRpcVaultInfo] = useState<RpcVaultInfo | null>(null);
     const [IssueAmount, setIssueAmount] = useState(0)
-    const [vaultAddress,setVaultAddress] = useState("")
-    const [vaultBtcAddress,setVaultBtcAddress] = useState("")
-    const [vaultButtonLoading,SetVaultButtonLoading] = useState(false)
-    const { api, isApiReady } = useApi();
+    const [vaultAddress, setVaultAddress] = useState("")
+    const [vaultBtcAddress, setVaultBtcAddress] = useState("")
+    const [vaultButtonLoading, SetVaultButtonLoading] = useState(false)
+    const {api, isApiReady} = useApi();
 
-    const unsub = async ()=> {
-        await api.tx.balances
-            .transfer("5HeCCrZENrAAbrVWGQ7sN5YPrBKptLuX8xMtwNe7eKsCXouP",123)
-            .signAndSend("5HRHgARNHuR57kEY2aqa7o8V5MVEYRRF2axd4T7G8LifFmEP",(result)=>{
-                console.log("resultStatus:" + result.status.asInBlock)
+    async function ConfirmationIssueTrade () {
+        try{
+            // @ts-ignore
+            const injector = await web3FromAddress(currentAccount.address)
+            api.tx.xGatewayBitcoinV2.requestIssue(vaultAddress,IssueAmount)
+                // @ts-ignore
+                .signAndSend(currentAccount.address,{signer:injector.signer},({status}) => {
+                    if(status.isInBlock){
+                        notification['success']({
+                            message: `Completed at block hash ${ status.asInBlock.toString()}`,
+                            duration: 0
+                        })
+                    }else {
+                        notification['success']({
+                            message: `Current status: ${status.type}`,
+                            duration: 0
+                        })
+                    }
+                })
+        }catch (error){
+            notification['error']({
+                message: `:( transaction failed', ${error}`,
+                duration: 0
             })
-    }
-    const ConfirmationIssueTrade = (): void => {
-        unsub();
-        api.tx.xGatewayBitcoinV2.requestIssue(vaultAddress,IssueAmount)
-
-        setConfirmationIssue(false)
+        }
     }
     const handleMatchVault = async () => {
-        if(IssueAmount <= 0){
-            notification.warn({ message: "发行的值必须大于0" });
+        if (IssueAmount <= 0) {
+            notification.warn({message: "发行的值必须大于0"});
             return
         }
-            SetVaultButtonLoading(true)
-            const Array = [];
-            await api.query.xGatewayBitcoinV2.vaults.entries().then(
-                data => {
-                    if(data[0]){
-                        Array.push(data[0])
-                        Array.forEach(([key,value]) => {
-                            setVaultAddress(key.args.toString())
-                            setVaultBtcAddress(value.unwrap().wallet.toString())
-                            setConfirmationIssue(true)
-                            SetVaultButtonLoading(false)
-                        })
-                    }else{
-                        notification.warn({ message: "No matching vault found." });
-                        SetVaultButtonLoading(false)
-                    }
-                }
-            )
+        SetVaultButtonLoading(true)
+        const vaults = await api.query.xGatewayBitcoinV2.vaults.entries();
+        const result = vaults.find(
+            ([, vault]) =>
+                vault.unwrap().issuedTokens.toNumber() - vault.unwrap().toBeRedeemedTokens.toNumber() >=
+                IssueAmount * 100000000
+        );
+        setVaultAddress(result ? ChangeChainXAddress(result[1].unwrap().id.toString()) : "")
+        setVaultBtcAddress(result ? result[1].unwrap().wallet.toString() : "")
+        setConfirmationIssue(true)
+        SetVaultButtonLoading(false)
     }
     return (
         <IssueStyle>
@@ -132,7 +141,8 @@ function Issue() {
                     </ConfirmationIssueModalFooter>
                     <VaultAccountStyle>
                         <div>{t('Vault')}</div>
-                        <div className={"current-account"}>{vaultAddress? encodeAddress(decodeAddress(vaultAddress),44) : ""}</div>
+                        <div
+                            className={"current-account"}>{vaultAddress ? encodeAddress(decodeAddress(vaultAddress), 44) : ""}</div>
                     </VaultAccountStyle>
                     <VaultAccountStyle>
                         <div>{t('BTC address of Vault')}</div>
