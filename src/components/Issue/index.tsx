@@ -35,11 +35,9 @@ function Issue() {
 
     async function ConfirmationIssueTrade () {
         try{
-            // @ts-ignore
-            const injector = await web3FromAddress(currentAccount.address)
+            const injector = await web3FromAddress(currentAccount!!.address)
             api.tx.xGatewayBitcoinV2.requestIssue(vaultAddress,IssueAmount)
-                // @ts-ignore
-                .signAndSend(currentAccount.address,{signer:injector.signer},({status}) => {
+                .signAndSend(currentAccount!!.address,{signer:injector.signer},({status}) => {
                     if(status.isInBlock){
                         notification['success']({
                             message: `Completed at block hash ${ status.asInBlock.toString()}`,
