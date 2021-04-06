@@ -44,17 +44,26 @@ function Issue() {
                             duration: 0
                         })
                     }else {
+                        console.log(status.type)
                         notification['success']({
                             message: `Current status: ${status.type}`,
                             duration: 0
                         })
+                        if(status.type === "Finalized"){
+                            setConfirmationIssue(false)
+                        }
                     }
+                }).catch((error) => {
+                notification['error']({
+                    message: `:( transaction failed', ${error}`,
+                    duration: 0
                 })
+            })
         }catch (error){
             notification['error']({
                 message: `:( transaction failed', ${error}`,
                 duration: 0
-            })
+            }) 
         }
     }
     const handleMatchVault = async () => {
