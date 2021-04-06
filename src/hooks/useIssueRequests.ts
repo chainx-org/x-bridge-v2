@@ -19,5 +19,4 @@ interface IssueRequestsContextProps {
 export const IssueRequestsContext = createContext(
   ({} as unknown) as IssueRequestsContextProps
 );
-
 export const useIssueRequests = () => useContext(IssueRequestsContext);

@@ -23,6 +23,7 @@ import {
   IssueRequestsContext,
   IssueRequestRow,
 } from "./hooks/useIssueRequests";
+import { RedeemRequestsContext, RedeemRequestRow} from "./hooks/useRedeemRequest"
 import { IssueRequest, RequestId, TradingPrice } from "./interfaces";
 import { FeeContext } from "./hooks/useFeeContext";
 import type {Percent} from "@polkadot/types/interfaces/runtime";
@@ -55,7 +56,8 @@ export const App: React.FC = () => {
   // Issue requests context
   const [issueRequests, setIssueRequests] = useState<IssueRequestRow[]>([]);
   // Redeem requests context
-  // const [issueRequests, setIssueRequests] = useState<IssueRequest[]>([]);
+  const [redeemRequest,setReedemRequest] = useState<RedeemRequestRow[]>([]);
+  // const [RedeemRequests, setRedeemRequests] = useState<IssueRequest[]>([]);
 
   const [exchangeRate, setExchangeRate] = useState<TradingPrice | null>(null);
   const [percent, setPercent] =useState<Percent | null>(null)
@@ -96,7 +98,14 @@ export const App: React.FC = () => {
             }))
         );
       });
-
+      api!!.query.xGatewayBitcoinV2.redeemRequests.entries().then((data)=>{
+        setReedemRequest(
+          data.map(([requestId, value]) => ({
+            id: requestId.args[0],
+            ...value.unwrap(),
+          }))
+      );
+      })
       api!!.rpc.chain.subscribeNewHeads(async () => {
         api!!.query.xGatewayBitcoinV2.issueRequests.entries().then((data) => {
           setIssueRequests(
@@ -106,6 +115,14 @@ export const App: React.FC = () => {
               }))
           );
         });
+        api!!.query.xGatewayBitcoinV2.redeemRequests.entries().then((data)=>{
+          setReedemRequest(
+            data.map(([requestId, value]) => ({
+              id: requestId.args[0],
+              ...value.unwrap(),
+            }))
+        );
+        })
       });
     }
   }, [isApiReady]);
@@ -189,6 +206,10 @@ export const App: React.FC = () => {
                       requests: issueRequests,
                     }}
                 >
+                  <RedeemRequestsContext.Provider
+                  value={{
+                    requests: redeemRequest,
+                  }}>
                   <FeeContext.Provider
                       value={{
                         exchangeRate: exchangeRate!!,
@@ -207,6 +228,7 @@ export const App: React.FC = () => {
                       </Suspense>
                     </main>
                   </FeeContext.Provider>
+                  </RedeemRequestsContext.Provider>  
                 </IssueRequestsContext.Provider>
               </ApiContext.Provider>
             </LayoutWrapper>

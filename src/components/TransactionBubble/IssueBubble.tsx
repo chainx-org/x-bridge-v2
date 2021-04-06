@@ -4,14 +4,15 @@ import enterLogo from "./icons/insert.svg";
 
 interface IssueBubbleProps {
   onClick: () => void;
+  BtcAmout: number
 }
 
-const IssueBubble: FC<IssueBubbleProps> = ({ onClick }) => {
+const IssueBubble: FC<IssueBubbleProps> = ({onClick,BtcAmout}) => {
   return (
     <li onClick={onClick}>
       <IssueBubbleStyle>
         <div className={"circle"}>发行</div>
-        <div className={"btc-amount"}>15.4528 XBTC</div>
+        <div className={"btc-amount"}>{+BtcAmout.toString(10)} XBTC</div>
         <div className={"transaction-confirmation"}>
           交易确认
           <div className={"confirmation-num"}>0</div>

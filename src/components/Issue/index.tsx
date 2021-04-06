@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import {useContext, useState} from "react";
 import {
     ConfirmationIssueModalFooter,
     ConfirmationIssueModalStyle,
@@ -13,12 +13,11 @@ import {InputNumber, Divider, Button, Modal, notification} from "antd";
 import {useTranslation} from "react-i18next";
 import useAccountModel from "../../hooks/useAccountModel"
 import {useApi} from "../../hooks/useApi"
-import {IssueRequest, RequestId, TradingPrice, RpcVaultInfo} from "../../interfaces";
+import {RpcVaultInfo} from "../../interfaces";
 import {FeeContext} from "../../hooks/useFeeContext";
 import {decodeAddress, encodeAddress} from "@polkadot/keyring";
 import ChangeChainXAddress from "../../util";
-import keyring from "@polkadot/ui-keyring";
-import {web3Accounts, web3FromAddress} from "@polkadot/extension-dapp";
+import {web3FromAddress} from "@polkadot/extension-dapp";
 
 function Issue() {
     const value = useContext(FeeContext)

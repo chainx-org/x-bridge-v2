@@ -4,14 +4,15 @@ import { RedeemBubbleStyle } from "./style";
 
 interface RedeemBubbleProps {
   onClick: () => void;
+  amount:number;
 }
 
-const RedeemBubble: FC<RedeemBubbleProps> = ({ onClick }) => {
+const RedeemBubble: FC<RedeemBubbleProps> = ({amount,onClick }) => {
   return (
     <li onClick={onClick}>
       <RedeemBubbleStyle>
         <div className={"circle"}>赎回</div>
-        <div className={"btc-amount"}>16.7294 BTC</div>
+        <div className={"btc-amount"}>{+amount.toString(10)} BTC</div>
         <div className={"remaining-time-title"}>
           剩余时间
           <div className={"remaining-time"}>47:56:10</div>
