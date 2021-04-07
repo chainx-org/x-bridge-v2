@@ -7,12 +7,12 @@ const LoadingStyle = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 500px;
+  height: 100vh;
 `
 function Loading(){
     return(
         <LoadingStyle>
-            <Spin indicator={antIcon} />
+            <Spin indicator={antIcon} size={"large"}/>
         </LoadingStyle>
     )
 }

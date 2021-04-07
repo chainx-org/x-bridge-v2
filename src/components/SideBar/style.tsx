@@ -46,6 +46,9 @@ export const SideBarStatus = styled.div`
     &.running{
       background: #34C69A;
     }
+    &.error{
+      background: red;
+    }
   }
   .status-info{
     font-size: 10px;
