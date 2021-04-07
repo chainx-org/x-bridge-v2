@@ -72,30 +72,29 @@ function Bridge() {
   );
   async function ConfirmationIssue () {
         const injector = await web3FromAddress(currentAccount!!.address)
-        console.log(typeof(parseInt(issueClickId)))
-        console.log(parseInt(issueClickId))
         api.tx.xGatewayBitcoinV2.executeIssue(parseInt(issueClickId),"","","")
-            .signAndSend(currentAccount!!.address,{signer:injector.signer},({ status, dispatchError}) => {
-                console.log(status.type)
+            .signAndSend(currentAccount!!.address,{signer:injector.signer},({status,dispatchError}) => {
                 if(status.isInBlock){
-                  if(dispatchError) {
-                    notification['error']({
-                      message: `:( transaction failed', ${dispatchError}`,
-                      duration: 0
-                  })
-                  }else
-                    notification['success']({
+                  notification['success']({
                         message: `Completed at block hash ${ status.asInBlock.toString()}`,
                         duration: 0
                     })
-                }else {
-                    console.log(status.type)
+                }else if(dispatchError){
+                  if(dispatchError.isModule){
+                    const decode = api.registry.findMetaError(dispatchError.asModule);
+                    const {documentation, name, section} = decode;
+                    notification['error']({
+                      message: `${section}.${name}: ${documentation.join(' ')}`,
+                      duration: 0
+                  })
+                  }
+                }else{
                     notification['success']({
                         message: `Current status: ${status.type}`,
                         duration: 0
                     })
                     if(status.type === "Finalized"){
-                        console.log("确认成功")
+                        SetIssueModalVisible(false)
                     }
                 }
             })

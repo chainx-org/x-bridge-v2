@@ -22,14 +22,22 @@ function Redeem() {
         }
         const injector = await web3FromAddress(currentAccount!!.address)
         api.tx.xGatewayBitcoinV2.requestRedeem(currentAccount!!.address,RedeemAmount * 100000000,BtcAddress)
-        .signAndSend(currentAccount!!.address,{signer:injector.signer},({status})=>{
+        .signAndSend(currentAccount!!.address,{signer:injector.signer},({status,dispatchError,events})=>{
             if(status.isInBlock){
                 notification['success']({
                     message: `Completed at block hash ${ status.asInBlock.toString()}`,
                     duration: 0
                 })
-            }else {
-                console.log(status.type)
+            }else if(dispatchError){
+                if(dispatchError.isModule){
+                    const decoded = api.registry.findMetaError(dispatchError.asModule);
+                    const { documentation, name, section } = decoded;
+                    notification['error']({
+                        message: `${section}.${name}: ${documentation.join(' ')}`,
+                        duration: 0
+                    })
+                }
+            }else{
                 notification['success']({
                     message: `Current status: ${status.type}`,
                     duration: 0

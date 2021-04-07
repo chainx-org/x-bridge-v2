@@ -33,17 +33,25 @@ function Issue() {
     const {api, isApiReady} = useApi();
 
     async function ConfirmationIssueTrade () {
-        try{
+
             const injector = await web3FromAddress(currentAccount!!.address)
             api.tx.xGatewayBitcoinV2.requestIssue(vaultAddress,IssueAmount)
-                .signAndSend(currentAccount!!.address,{signer:injector.signer},({status}) => {
+                .signAndSend(currentAccount!!.address,{signer:injector.signer},({status,dispatchError,events}) => {
                     if(status.isInBlock){
                         notification['success']({
                             message: `Completed at block hash ${ status.asInBlock.toString()}`,
                             duration: 0
                         })
-                    }else {
-                        console.log(status.type)
+                    }else if(dispatchError){
+                            if(dispatchError.isModule){
+                                const decoded = api.registry.findMetaError(dispatchError.asModule);
+                                const { documentation, name, section } = decoded;
+                                notification['error']({
+                                    message: `${section}.${name}: ${documentation.join(' ')}`,
+                                    duration: 0
+                                })
+                            }
+                    }else{
                         notification['success']({
                             message: `Current status: ${status.type}`,
                             duration: 0
@@ -52,18 +60,14 @@ function Issue() {
                             setConfirmationIssue(false)
                         }
                     }
-                }).catch((error) => {
+                }
+                ).catch((error) => {
                 notification['error']({
                     message: `:( transaction failed', ${error}`,
                     duration: 0
                 })
             })
-        }catch (error){
-            notification['error']({
-                message: `:( transaction failed', ${error}`,
-                duration: 0
-            }) 
-        }
+        
     }
     const handleMatchVault = async () => {
         if (IssueAmount <= 0) {
