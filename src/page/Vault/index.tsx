@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import RegisterVaultCard from "../../components/RegisterVaultCard";
 import VaultCard from "../../components/VaultCard";
 import { Option } from "@polkadot/types";
@@ -23,8 +23,10 @@ function VaultPage(){
     },[currentAccount,isApiReady])
     return (
         <>
-            {/*{vault ? <VaultCard/> : <RegisterVaultCard/>}*/}
-            <VaultCard/>
+            {vault ? 
+             <VaultCard/>
+             : 
+            <RegisterVaultCard/>}
         </>
     )
 }

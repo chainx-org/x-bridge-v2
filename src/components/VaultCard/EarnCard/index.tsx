@@ -57,9 +57,9 @@ function EarnCard() {
           setVault({
             address: currentAccount.address,
             btcAddress: vaultInfo.wallet,
-            toBeRedeemToken: vaultInfo.toBeIssuedTokens,
+            toBeRedeemToken: vaultInfo.toBeRedeemedTokens,
             toBeIssuedToken: vaultInfo.toBeIssuedTokens,
-            issuedToken: vaultInfo.toBeIssuedTokens,
+            issuedToken: vaultInfo.issuedTokens,
             collateral: collateral.data.reserved,
           });
         }
@@ -86,7 +86,7 @@ function EarnCard() {
             <div className={"earn-pcx-num"}>- PCX</div>
           </li>
           <li>
-            <div className={"earn-card-title"}>累计发行</div>
+            <div className={"earn-card-title"}>已发行</div>
             <div className={"issue-redeem-num"}>
               <BalanceSpan balance={vault?.issuedToken} />
               XBTC
@@ -100,7 +100,7 @@ function EarnCard() {
         <ul className={"right-ul"}>
           <li>
             <div className={"earn-card-title"}>可发行量</div>
-            <div className={"issuable-num"}>0.3523 BTC</div>
+            <div className={"issuable-num"}>{} BTC</div>
           </li>
           <li>
             <div className={"earn-card-title"}>抵押品 / 抵押率</div>
