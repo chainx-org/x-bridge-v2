@@ -68,7 +68,7 @@ function Redeem() {
                 <div className={"btc-title"}>BTC</div>
             </RedeemBtcInputStyle>
             <XBtcBalanceStyle>
-                {t('X-BTC balances')} {XbtcBalance}
+                {t('X-BTC balances')} {XbtcBalance ? XbtcBalance : "0"}
             </XBtcBalanceStyle>
             <BtcAddressStyle>
                 <div className={"btc-address-info"}>

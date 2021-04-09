@@ -3,7 +3,9 @@ import {AgreementStyle, CollateralStyle, RegisterAccountStyle, RegisterVaultCard
 import {useTranslation} from "react-i18next";
 import {Button, Checkbox, Form, Input, InputNumber} from "antd";
 import {BtcAddressStyle} from "../Redeem/style";
-
+import { useAccountInfo} from "../../hooks/useAccountInfo";
+import FormatBalance from "../../hooks/useFormatBalance";
+import useAccountModel from "../../hooks/useAccountModel";
 function RegisterVaultCard() {
     const {t} = useTranslation()
     const onFinish = (values: any) => {
@@ -12,13 +14,15 @@ function RegisterVaultCard() {
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
     };
+    const {currentAccount} = useAccountModel()
+    const accountInfo = useAccountInfo(currentAccount?.address!!)
     return (
         <RegisterVaultCardStyle>
             <div className={"card-title"}>注册保险库</div>
             <Form name={"register"} onFinish={onFinish} onFinishFailed={onFinishFailed}>
                 <RegisterAccountStyle>
                     <div>{t('Register Account')}</div>
-                    <div className={"current-account"}>5HpAy3ahw2S7LvXWphebx3K1Nh9qw8hjEGbUXhG6wWRg1WBb</div>
+                    <div className={"current-account"}>{currentAccount?.address}</div>
                 </RegisterAccountStyle>
                 <CollateralStyle>
                     <div className={"collateral-info"}>
@@ -35,7 +39,7 @@ function RegisterVaultCard() {
                             <InputNumber min={1000} placeholder={t('Please enter the number of collateral')}/>
                         </Form.Item>
                         <div className={"pcx-balance"}>
-                            PCX余额：99999.8432
+                            PCX余额：{FormatBalance(accountInfo?.data.free)}
                         </div>
                     </div>
                 </CollateralStyle>

@@ -10,6 +10,12 @@ export const SelectAccountStyle = styled.div`
     font-weight: bold;
     margin-right: 10px;
   }
+  .balance{
+    font-size: 14px;
+    color: #282828;
+    font-weight: bold;
+    margin-right: 10px;
+  }
   .ant-radio-group {
     display: flex ;
     flex-direction: column ;

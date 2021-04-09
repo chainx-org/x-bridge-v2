@@ -31,7 +31,7 @@ function History() {
             const response = await fetch(
                 `https://api-btc.chainx.org/xbridge/${
                     activeTab === HistoryTab.Issue ? "issue_requests" : "redeem_requests"
-                }?page=0&pageSize=5&requester=${currentAccount?.address}`,
+                }?page=0&pageSize=5&requester=${"16MapVgS9ggYZHF3zDtaFwxdvyUtEiyP75h7Dk6cgRkBSCeP"}`,
                 {
                     method: "GET"
                 }

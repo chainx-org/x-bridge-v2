@@ -82,7 +82,7 @@ export const App: React.FC = () => {
     const api = new ApiPromise({ provider, types });
     api.on("error", (err) =>
       notification.error({
-        message: `Cannot connect to ws endpoint. Error: ${err}`,
+        message: `Cannot connect to ws endpoint. Error: ${err}`
       })
     );
     api.on("disconnected", () => setApiReady(false));
