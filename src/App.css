@@ -146,3 +146,8 @@ border-color: #f6c94a;
 .ant-notification-notice{
  border-radius: 10px;
 }
+.ant-radio-wrapper{
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: bold;
+}
