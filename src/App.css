@@ -137,3 +137,12 @@ border-color: #f6c94a;
 .ant-radio-inner::after {
     background: #f6c94a;
 }
+.ant-modal-header{
+ border-radius: 10px;
+}
+.ant-modal-content{
+    border-radius: 10px;
+}
+.ant-notification-notice{
+ border-radius: 10px;
+}

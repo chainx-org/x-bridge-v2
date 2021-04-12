@@ -1,12 +1,28 @@
-import React from "react";
+import React, {useState, useEffect, useContext} from "react";
+import { Option } from "@polkadot/types";
+import {Vault} from "../../../interfaces"
+import useAccountModel from "../../../hooks/useAccountModel"
+import {useApi} from "../../../hooks/useApi"
 import {BtcInfoCardStyle, TradeInfoStyle} from "./style";
 
 function BtcInfoCard() {
+    const {currentAccount} = useAccountModel();
+    const { api, isApiReady } = useApi();
+    const [btcAddress,SetBtcAddress] = useState("")
+    useEffect(()=> {
+        async function GetStatus() {
+            const status = await api.query.xGatewayBitcoinV2.vaults<Option<Vault>>(currentAccount?.address || "");
+           SetBtcAddress(status.unwrap().wallet.toString())
+        }
+        if(isApiReady){
+            GetStatus()
+        }
+    },[currentAccount,isApiReady])
     return (
         <BtcInfoCardStyle>
             <div className={"card-item"}>
                 <div className={"card-title"}>BTC 地址</div>
-                <div className={"card-address"}>TODO</div>
+                <div className={"card-address"}>{btcAddress}</div>
             </div>
             <div className={"card-item"}>
                 <div className={"card-title"}>BTC 余额</div>

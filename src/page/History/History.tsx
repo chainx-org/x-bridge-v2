@@ -4,7 +4,7 @@ import {useTranslation} from "react-i18next";
 import {Table} from "antd";
 import {ColumnType} from "antd/lib/table";
 import useAccountModel from "../../hooks/useAccountModel"
-
+import { decodeAddress, encodeAddress } from "@polkadot/keyring";
 interface HistoryRow {
     id: number;
     amount: number;
@@ -43,7 +43,7 @@ function History() {
                     return {
                         id: info._id,
                         amount: info.btcAmount / 100000000,
-                        chainxAddr: info.requester,
+                        chainxAddr: encodeAddress(decodeAddress(info.requester),44),
                         vaultBtcAddr: info.vault,
                         hash: "",
                         countedBlock: 0,

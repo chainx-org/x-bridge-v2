@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   BridgeCardStyle,
   BridgeStyle,
@@ -33,6 +33,8 @@ import { useApi } from "../../hooks/useApi";
 import { RedeemRequestsContext } from "../../hooks/useRedeemRequest";
 import { stringToHex } from "@polkadot/util";
 import { web3FromAddress } from "@polkadot/extension-dapp";
+import { useLeftBlock } from "../../hooks/useLeftBlock";
+import { useApiReady } from "../../hooks/useApiReady";
 enum Tab {
   Issue,
   Redeem,
@@ -43,62 +45,159 @@ function Bridge() {
   const RedeemData = useContext(RedeemRequestsContext);
   const { currentAccount } = useAccountModel();
   const { api, isApiReady } = useApi();
-  let IssueRequestList = [];
-  let RedeemRequestList = [];
-  if (isApiReady) {
-    let polkaAccount = encodeAddress(
-      decodeAddress(currentAccount ? currentAccount.address : ""),
-      0
-    );
+  const [IssueRequestList,SetIssueRequestList] = useState([] as any[]);
+  const [RedeemRequestList,SetRedeemRequestList] = useState([] as any[])
+  let polkaAccount = encodeAddress(
+    decodeAddress(currentAccount ? currentAccount.address : "16aVMBpJEdRe3PW2E3AsWENYhoKUaeTfDT6P6fdUCQtiiHVL"),
+    0
+  );
+  useMemo(() => {
     let AllIssueRequestList: Array<any> = JSON.parse(JSON.stringify(value))
       .requests;
+      let issueList = AllIssueRequestList.filter((item) => item.requester === polkaAccount)
+    SetIssueRequestList(issueList)
+  }, [value])
+  useMemo(() => {
     let AllRedeemRequestList: Array<any> = JSON.parse(
       JSON.stringify(RedeemData)
     ).requests;
-    IssueRequestList = AllIssueRequestList.filter(
+    let RedeemList = AllRedeemRequestList.filter(
       (item) => item.requester === polkaAccount
-    );
-    RedeemRequestList = AllRedeemRequestList.filter(
-      (item) => item.requester === polkaAccount
-    );
-  }
+    )
+    SetRedeemRequestList(RedeemList)
+  }, [RedeemData])
+
   const [issueModalVisible, SetIssueModalVisible] = useState(false);
   const [RedeemModalVisible, SetRedeemModalVisible] = useState(false);
   const [issueClickId, SetissueClickId] = useState("");
+  const [RedeemClickId, SetRedeemClickId] = useState("");
+  const [leftBlock, setLeftBlock] = useState(100);
   const { t } = useTranslation();
   const { setActiveTab, isActive } = useTab(Tab.Issue);
   const issueModalData = IssueRequestList.filter(
     (item) => item.id === issueClickId
   );
-  async function ConfirmationIssue () {
-        const injector = await web3FromAddress(currentAccount!!.address)
-        api.tx.xGatewayBitcoinV2.executeIssue(parseInt(issueClickId),"","","")
-            .signAndSend(currentAccount!!.address,{signer:injector.signer},({status,dispatchError}) => {
-                if(status.isInBlock){
-                  notification['success']({
-                        message: `Completed at block hash ${ status.asInBlock.toString()}`,
-                        duration: 0
-                    })
-                }else if(dispatchError){
-                  if(dispatchError.isModule){
-                    const decode = api.registry.findMetaError(dispatchError.asModule);
-                    const {documentation, name, section} = decode;
-                    notification['error']({
-                      message: `${section}.${name}: ${documentation.join(' ')}`,
-                      duration: 0
-                  })
-                  }
-                }else{
-                    notification['success']({
-                        message: `Current status: ${status.type}`,
-                        duration: 0
-                    })
-                    if(status.type === "Finalized"){
-                        SetIssueModalVisible(false)
+  const RedeemModalData = RedeemRequestList.filter(
+    (item) => item.id === RedeemClickId
+  );
+  useEffect(() => {
+    if (!RedeemModalData[0]) return;
+    let unsub = api.rpc.chain.subscribeNewHeads((header) => {
+      setLeftBlock(
+        Math.max(
+          0,
+          100 - header.number.toNumber() + +RedeemModalData[0].openTime
+        )
+      );
+    });
+    return () => {
+      unsub.then();
+    };
+  }, [RedeemClickId]);
+  // async function ConfirmationIssue() {
+  //   const injector = await web3FromAddress(currentAccount!!.address);
+  //   api.tx.xGatewayBitcoinV2
+  //     .executeIssue(parseInt(issueClickId), "", "", "")
+  //     .signAndSend(
+  //       currentAccount!!.address,
+  //       { signer: injector.signer },
+  //       ({ status, dispatchError }) => {
+  //         if (status.isInBlock) {
+  //           notification["success"]({
+  //             message: `Completed at block hash ${status.asInBlock.toString()}`,
+  //             duration: 0,
+  //           });
+  //         } else if (dispatchError) {
+  //           if (dispatchError.isModule) {
+  //             const decode = api.registry.findMetaError(dispatchError.asModule);
+  //             const { documentation, name, section } = decode;
+  //             notification["error"]({
+  //               message: `${section}.${name}: ${documentation.join(" ")}`,
+  //               duration: 0,
+  //             });
+  //           }
+  //         } else {
+  //           notification["success"]({
+  //             message: `Current status: ${status.type}`,
+  //             duration: 0,
+  //           });
+  //           if (status.type === "Finalized") {
+  //             SetIssueModalVisible(false);
+  //           }
+  //         }
+  //       }
+  //     );
+  // }
+  async function handleCancelRedemption() {
+    const injector = await web3FromAddress(currentAccount!!.address)
+    api.tx.xGatewayBitcoinV2.cancelRedeem(RedeemClickId,false)
+        .signAndSend(currentAccount!!.address,{signer:injector.signer},({status,dispatchError,events}) => {
+            if(status.isInBlock){
+                notification['success']({
+                    message: `Completed at block hash ${ status.asInBlock.toString()}`,
+                    duration: 0
+                })
+            }else if(dispatchError){
+                    if(dispatchError.isModule){
+                        const decoded = api.registry.findMetaError(dispatchError.asModule);
+                        const { documentation, name, section } = decoded;
+                        notification['error']({
+                            message: `${section}.${name}: ${documentation.join(' ')}`,
+                            duration: 0
+                        })
                     }
+            }else{
+                notification['success']({
+                    message: `Current status: ${status.type}`,
+                    duration: 0
+                })
+                if(status.type === "Finalized"){
+                  SetRedeemModalVisible(false)
                 }
-            })
-    }
+            }
+        }
+        ).catch((error) => {
+        notification['error']({
+            message: `:( transaction failed', ${error}`,
+            duration: 0
+        })
+    })
+  }
+  async function handleForceCancel() {
+    const injector = await web3FromAddress(currentAccount!!.address)
+    api.tx.xGatewayBitcoinV2.cancelRedeem(RedeemClickId,true)
+        .signAndSend(currentAccount!!.address,{signer:injector.signer},({status,dispatchError,events}) => {
+            if(status.isInBlock){
+                notification['success']({
+                    message: `Completed at block hash ${ status.asInBlock.toString()}`,
+                    duration: 0
+                })
+            }else if(dispatchError){
+                    if(dispatchError.isModule){
+                        const decoded = api.registry.findMetaError(dispatchError.asModule);
+                        const { documentation, name, section } = decoded;
+                        notification['error']({
+                            message: `${section}.${name}: ${documentation.join(' ')}`,
+                            duration: 0
+                        })
+                    }
+            }else{
+                notification['success']({
+                    message: `Current status: ${status.type}`,
+                    duration: 0
+                })
+                if(status.type === "Finalized"){
+                  SetRedeemModalVisible(false)
+                }
+            }
+        }
+        ).catch((error) => {
+        notification['error']({
+            message: `:( transaction failed', ${error}`,
+            duration: 0
+        })
+    })
+  }
   return (
     <BridgeStyle>
       <BridgeCardStyle>
@@ -124,7 +223,6 @@ function Bridge() {
         </FunctionSwitchButton>
         {isActive(Tab.Issue) ? <Issue /> : <Redeem />}
       </BridgeCardStyle>
-
       <TransactionBubbleStyle>
         <ul>
           {IssueRequestList.map((item) => (
@@ -141,12 +239,15 @@ function Bridge() {
             <RedeemBubble
               key={item.id}
               amount={item.amount}
-              onClick={() => SetRedeemModalVisible(true)}
+              openTime={item.openTime}
+              onClick={() => {
+                SetRedeemModalVisible(true);
+                SetRedeemClickId(item.id);
+              }}
             />
           ))}
         </ul>
       </TransactionBubbleStyle>
-
       <IssueModalStyle>
         <Modal
           visible={issueModalVisible}
@@ -163,7 +264,7 @@ function Bridge() {
             <div className={"info-title"}>转账金额</div>
             <div className={"transfer-amount"}>
               {issueModalData.length > 0
-                ? +issueModalData[0].btcAmount.toString(10)
+                ? (+issueModalData[0].btcAmount.toString(10)).toFixed(5)
                 : 0}{" "}
               BTC
             </div>
@@ -183,7 +284,7 @@ function Bridge() {
             <div className={"address"}>
               {stringToHex(
                 issueModalData.length > 0 ? issueModalData[0].btcAddress : ""
-              )}
+              ).substring(2,99)}
             </div>
           </VaultOpReturnStyle>
           <IssueModalFooter>
@@ -200,24 +301,20 @@ function Bridge() {
                 <div className={"title"}>发行数量</div>
                 <div className={"content"}>
                   {issueModalData.length > 0
-                    ? parseInt(issueModalData[0].btcAmount)
+                    ? (parseInt(issueModalData[0].btcAmount)).toFixed(5)
                     : 0}{" "}
                   XBTC
                 </div>
               </li>
-              <li>
+              {/* <li>
                 <div className={"title"}>交易确认数量</div>
                 <div className={"content"}>-</div>
-                {/* TODO 交易确认数量 */}
-              </li>
+              </li> */}
             </ul>
           </IssueModalFooter>
-          <Button onClick={ConfirmationIssue}>
-            确认交易
-            </Button>
+          {/* <Button onClick={ConfirmationIssue}>确认交易</Button> */}
         </Modal>
       </IssueModalStyle>
-
       <RedeemModalStyle>
         <Modal
           visible={RedeemModalVisible}
@@ -236,26 +333,42 @@ function Bridge() {
           </RedeemModalTip>
           <RedeemTimeStyle>
             <div className={"title"}>{t("Remaining time")}</div>
-            <div className={"time"}>00:06</div>
+            <div className={"time"}>
+              {new Date(leftBlock * 6 * 1000).toISOString().substr(11, 5)}
+            </div>
           </RedeemTimeStyle>
           <CancelRedeemStyle>
-            <Button>{t("Cancel redemption")}</Button>
-            <div className={"force-redeem"}>{t("Forcible redemption")}</div>
+            <Button disabled={leftBlock !== 0} onClick={handleCancelRedemption}>
+              {t("Cancel redemption")}
+            </Button>
+            <div onClick={handleForceCancel} className={"force-redeem"}>
+              {t("Forcible redemption")}
+            </div>
           </CancelRedeemStyle>
           <RedeemModalFooterStyle>
             <ul>
               <li>
                 <div className={"title"}>{t("Request ID")}</div>
-                <div className={"content"}>1</div>
+                <div className={"content"}>
+                  {RedeemModalData.length > 0
+                    ? +RedeemModalData[0].id.toString(10)
+                    : ""}
+                </div>
               </li>
               <li>
                 <div className={"title"}>{t("Amount")}</div>
-                <div className={"content"}>1 XBTC</div>
+                <div className={"content"}>
+                  {" "}
+                  {RedeemModalData.length > 0
+                    ? (+RedeemModalData[0].amount.toString(10)).toFixed(5)
+                    : 0}{" "}
+                  XBTC
+                </div>
               </li>
-              <li>
+              {/* <li>
                 <div className={"title"}>{t("Confirmation")}</div>
-                <div className={"content"}>10</div>
-              </li>
+                <div className={"content"}>-</div>
+              </li> */}
             </ul>
           </RedeemModalFooterStyle>
         </Modal>

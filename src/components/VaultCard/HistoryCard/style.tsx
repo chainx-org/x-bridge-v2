@@ -9,4 +9,7 @@ export const HistoryCardStyle = styled.div`
   background: #fff;
   border: 1px solid #EFEFEF;
   border-radius: 10px;
+  .ant-table{
+    font-size:12px
+  }
 `

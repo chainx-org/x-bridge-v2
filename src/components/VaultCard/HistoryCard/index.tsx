@@ -3,37 +3,14 @@ import {HistoryCardStyle} from "./style";
 import {FunctionSwitchButton, TableStyle} from "../../../page/History/style";
 import {useTranslation} from "react-i18next";
 import {Table} from "antd";
-import {ColumnType} from "antd/lib/table";
 import useAccountModel from "../../../hooks/useAccountModel";
 import {useApi} from "../../../hooks/useApi";
-const columns: ColumnType<{
-    key: string,
-    name: string,
-    age: number,
-    address: string,
-}>[] = [
-        {
-            title: 'Name (all screens)',
-            dataIndex: 'name',
-            key: 'name',
-            render: text => <a>{text}</a>,
-        },
-        {
-            title: 'Age (medium screen or bigger)',
-            dataIndex: 'age',
-            key: 'age',
-            responsive: ['md'],
-        },
-        {
-            title: 'Address (large screen or bigger)',
-            dataIndex: 'address',
-            key: 'address',
-            responsive: ['lg'],
-        },
-    ];
+import {useRedeemRequests} from "../../../hooks/useRedeemRequestList";
+import {convertBalanceToDisplayValue} from '../../../util'
+import {decodeAddress, encodeAddress} from "@polkadot/keyring";
 const data = [
     {
-        key: '1',
+        id: 'id',
         name: 'John Brown',
         age: 32,
         address: 'New York No. 1 Lake Park',
@@ -47,21 +24,33 @@ const data2 = [
         address: '赎回',
     },
 ];
+interface HistoryRow {
+    id: string;
+    amount: string;
+    chainxAddress: string;
+    btcAddress: string;
+    hash: string;
+    countedBlock: string;
+    status: string;
+  }
 function HistoryCard() {
     const [HistoryStatus, SetHistoryStatus] = useState('issue')
     const {currentAccount} = useAccountModel();
     const {api} =useApi()
     const {t} = useTranslation()
+    const redeemRequestsList = useRedeemRequests();
     const Emitcolumns = [
         {
             title: t<string>("Request number"),
             dataIndex: "id",
-            key: "id"
+            key: "id",
+            width:80
         },
         {
             title: t<string>("Amount"),
             dataIndex: "amount",
-            key: "amount"
+            key: "amount",
+            width:80
         },
         {
             title: t<string>("ChainX Address"),
@@ -75,30 +64,30 @@ function HistoryCard() {
             ellipsis: true,
             key: "btcAddress"
         },
-        {
-            title: t<string>("Transaction"),
-            dataIndex: "hash",
-            key: "hash"
-        },
-        {
-            title: t<string>("Confirmation"),
-            dataIndex: "countedBlock",
-            key: "countedBlock"
-        },
-        {
-            title: t<string>("State"),
-            dataIndex: "status",
-            key: "status",
-            render: (text: string, record: any) => (
-                <a
-                    onClick={() =>
-                        record.status === "确认" && console.log('dasda')
-                    }
-                >
-                    {text}
-                </a>
-            )
-        }
+        // {
+        //     title: t<string>("Transaction"),
+        //     dataIndex: "hash",
+        //     key: "hash"
+        // },
+        // {
+        //     title: t<string>("Confirmation"),
+        //     dataIndex: "countedBlock",
+        //     key: "countedBlock"
+        // },
+        // {
+        //     title: t<string>("State"),
+        //     dataIndex: "status",
+        //     key: "status",
+        //     render: (text: string, record: any) => (
+        //         <a
+        //             onClick={() =>
+        //                 record.status === "确认" && console.log('dasda')
+        //             }
+        //         >
+        //             {text}
+        //         </a>
+        //     )
+        // }
     ]
     return (
         <HistoryCardStyle>
@@ -112,8 +101,20 @@ function HistoryCard() {
             </FunctionSwitchButton>
             <TableStyle>
                 {HistoryStatus === "issue" ?
-                    <Table columns={Emitcolumns} dataSource={data} /> :
-                    <Table columns={columns} dataSource={data2} />
+                    <Table columns={Emitcolumns} dataSource={redeemRequestsList
+                        .filter(value => encodeAddress(decodeAddress(value.vaultId),44) === currentAccount?.address)
+                        .map<HistoryRow>(row => {
+                          return {
+                            id: row.id.toString(),
+                            amount: convertBalanceToDisplayValue(row.amount).toString(),
+                            chainxAddress: encodeAddress(decodeAddress(row.chainxAddr.toString()),44),
+                            btcAddress: row.userBtcAddr.toString(),
+                            hash: "",
+                            countedBlock: "0",
+                            status: "确认"
+                          };
+                        })} /> :
+                    <Table columns={Emitcolumns} dataSource={data2} />
                 }
             </TableStyle>
         </HistoryCardStyle>

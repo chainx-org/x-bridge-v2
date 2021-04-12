@@ -138,4 +138,13 @@ export const VaultAccountStyle = styled.div`
     color: #8E8E8E;
   }
 `
+export const PCXbalanceStyle = styled.div`
+margin-top: 20px;
+display: flex;
+justify-content: center;
+font-size: 14px;
+color: #282828;
+font-weight: bold;
+
+`
 

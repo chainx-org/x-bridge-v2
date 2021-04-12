@@ -7,6 +7,7 @@ import useXbtcAssets from "../../hooks/useXbtcAssets"
 import useAccountModel from "../../hooks/useAccountModel"
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { useApi } from "../../hooks/useApi";
+var WAValidator = require('wallet-address-validator');
 function Redeem() {
     const {currentAccount} = useAccountModel();
     const {t} = useTranslation()
@@ -16,6 +17,11 @@ function Redeem() {
     const {api, isApiReady} = useApi();
     const {XbtcBalance} = useXbtcAssets(currentAccount?.address!!,n)
     const handleReedem = async()=>{
+        let valid =  WAValidator.validate(BtcAddress,'BTC')
+        if(!valid){
+            notification.warn({message: "请输入合法的BTC地址"});
+            return
+        }
         if(RedeemAmount <= 0){
             notification.warn({message: "赎回的值必须大于0"});
             return
@@ -62,7 +68,7 @@ function Redeem() {
                 <div className={"btc-title"}>BTC</div>
             </RedeemBtcInputStyle>
             <XBtcBalanceStyle>
-                {t('X-BTC balances')} {XbtcBalance}
+                {t('X-BTC balances')} {XbtcBalance ? XbtcBalance : "0"}
             </XBtcBalanceStyle>
             <BtcAddressStyle>
                 <div className={"btc-address-info"}>

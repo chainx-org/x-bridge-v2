@@ -8,9 +8,9 @@ export const BalanceSpan: FC<BalanceSpanProps> = ({ balance }) => {
   let value;
   if (balance) {
     if (typeof balance === "number") {
-      value = (balance / 100000000).toFixed(2).toString();
+      value = (balance / 100000000).toFixed(5).toString();
     } else {
-      value = (balance.toNumber() / 100000000).toFixed(2).toString();
+      value = (balance.toNumber() / 100000000).toFixed(5).toString();
     }
   } else {
     value = "-";
