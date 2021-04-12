@@ -107,7 +107,7 @@ function HistoryCard() {
                           return {
                             id: row.id.toString(),
                             amount: convertBalanceToDisplayValue(row.amount).toString(),
-                            chainxAddress: row.chainxAddr.toString(),
+                            chainxAddress: encodeAddress(decodeAddress(row.chainxAddr.toString()),44),
                             btcAddress: row.userBtcAddr.toString(),
                             hash: "",
                             countedBlock: "0",

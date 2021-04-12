@@ -4,7 +4,7 @@ import {useTranslation} from "react-i18next";
 import {Table} from "antd";
 import {ColumnType} from "antd/lib/table";
 import useAccountModel from "../../hooks/useAccountModel"
-
+import { decodeAddress, encodeAddress } from "@polkadot/keyring";
 interface HistoryRow {
     id: number;
     amount: number;
@@ -31,7 +31,7 @@ function History() {
             const response = await fetch(
                 `https://api-btc.chainx.org/xbridge/${
                     activeTab === HistoryTab.Issue ? "issue_requests" : "redeem_requests"
-                }?page=0&pageSize=5&requester=${"16MapVgS9ggYZHF3zDtaFwxdvyUtEiyP75h7Dk6cgRkBSCeP"}`,
+                }?page=0&pageSize=5&requester=${currentAccount?.address}`,
                 {
                     method: "GET"
                 }
@@ -43,7 +43,7 @@ function History() {
                     return {
                         id: info._id,
                         amount: info.btcAmount / 100000000,
-                        chainxAddr: info.requester,
+                        chainxAddr: encodeAddress(decodeAddress(info.requester),44),
                         vaultBtcAddr: info.vault,
                         hash: "",
                         countedBlock: 0,
