@@ -8,8 +8,12 @@ export function useAccountInfo(account: string): AccountInfo | null {
   
     useEffect(() => {
       const fetchData = async () => {
-        const info = await api.query.system.account(account);
-        setAccountInfo(info);
+        if(account){
+          const info = await api.query.system.account(account);
+          setAccountInfo(info);
+        }else{
+          return
+        }
       };
   
       if (isApiReady) {
@@ -20,8 +24,12 @@ export function useAccountInfo(account: string): AccountInfo | null {
     useEffect(() => {
       if (isApiReady) {
         let unsubscribe = api.rpc.chain.subscribeFinalizedHeads(async header => {
-          const info = await api.query.system.account(account);
-          setAccountInfo(info);
+          if(account){
+            const info = await api.query.system.account(account);
+            setAccountInfo(info);
+          }else{
+            return
+          }
         });
   
         return () => {

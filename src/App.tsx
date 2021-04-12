@@ -31,6 +31,7 @@ import { IssueRequest, RequestId, TradingPrice } from "./interfaces";
 import { FeeContext } from "./hooks/useFeeContext";
 import type { Percent } from "@polkadot/types/interfaces/runtime";
 import { decodeAddress, encodeAddress } from "@polkadot/keyring";
+import NoExtensions from "./components/NoExtensions";
 
 const Bridge = lazy(() => import("./page/Bridge"));
 const History = lazy(() => import("./page/History/History"));
@@ -61,6 +62,7 @@ export const App: React.FC = () => {
   // Redeem requests context
   const [redeemRequest, setReedemRequest] = useState<RedeemRequestRow[]>([]);
   // const [RedeemRequests, setRedeemRequests] = useState<IssueRequest[]>([]);
+  const [downExtensions, setExtensitions] = useState(false)
 
   const [exchangeRate, setExchangeRate] = useState<TradingPrice | null>(null);
   const [percent, setPercent] = useState<Percent | null>(null);
@@ -132,34 +134,43 @@ export const App: React.FC = () => {
     }
   }, [isApiReady]);
 
+ 
   // Init accounts
   useEffect(() => {
-    web3Enable("X bridge").then(async () => {
-      const accounts = await web3Accounts();
-
-      if (accounts.length > 0) {
-        accountModel.setCurrentAccount({
-          name: accounts[0].meta.name,
-          address: ChangeChainXAddress(accounts[0].address),
+    async function initial () {
+      const extensions = await web3Enable('polkadot-js/apps');
+      if(extensions.length > 0){
+        web3Enable("X bridge").then(async () => {
+          const accounts = await web3Accounts();
+    
+          if (accounts.length > 0) {
+            accountModel.setCurrentAccount({
+              name: accounts[0].meta.name,
+              address: ChangeChainXAddress(accounts[0].address),
+            });
+          }
+    
+          accountModel.setAccounts(
+            accounts.map(({ address, meta: { name } }) => ({
+              name,
+              address: encodeAddress(decodeAddress(address), 44),
+            }))
+          );
+    
+          web3AccountsSubscribe((accounts) => {
+            accountModel.setAccounts(
+              accounts.map(({ address, meta: { name } }) => ({
+                name,
+                address: encodeAddress(decodeAddress(address), 44),
+              }))
+            );
+          });
         });
+      }else{
+        setExtensitions(true)
       }
-
-      accountModel.setAccounts(
-        accounts.map(({ address, meta: { name } }) => ({
-          name,
-          address: encodeAddress(decodeAddress(address), 44),
-        }))
-      );
-
-      web3AccountsSubscribe((accounts) => {
-        accountModel.setAccounts(
-          accounts.map(({ address, meta: { name } }) => ({
-            name,
-            address: encodeAddress(decodeAddress(address), 44),
-          }))
-        );
-      });
-    });
+    }
+    initial();
   }, []);
 
   // Init fee
@@ -208,6 +219,11 @@ export const App: React.FC = () => {
       {!isApiReady ? (
         <MaskStyle>
           <Loading />
+        </MaskStyle>
+      ) : null}
+      {downExtensions? (
+        <MaskStyle>
+          <NoExtensions />
         </MaskStyle>
       ) : null}
       <bridgeStatusContext.Provider value={bridgeStatus}>
