@@ -1,25 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
 import {AgreementStyle, CollateralStyle, RegisterAccountStyle, RegisterVaultCardStyle} from "./style";
 import {useTranslation} from "react-i18next";
-import {Button, Checkbox, Form, Input, InputNumber} from "antd";
+import {Button, Checkbox, Form, Input, InputNumber, notification} from "antd";
 import {BtcAddressStyle} from "../Redeem/style";
 import { useAccountInfo} from "../../hooks/useAccountInfo";
 import FormatBalance from "../../hooks/useFormatBalance";
 import useAccountModel from "../../hooks/useAccountModel";
+import { web3FromAddress } from "@polkadot/extension-dapp";
+import { useApi } from "../../hooks/useApi";
+import VaultCard from "../VaultCard";
 function RegisterVaultCard() {
     const {t} = useTranslation()
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
-    };
-    const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo);
-    };
     const {currentAccount} = useAccountModel()
     const accountInfo = useAccountInfo(currentAccount?.address!!)
+    const { api, isApiReady } = useApi();
+    const [regVault,setRegVault] = useState(false)
+    async function onFinish(values: any) {
+        console.log(values)
+        const injector = await web3FromAddress(currentAccount!!.address);
+        api.tx.xGatewayBitcoinV2
+          .registerVault(values.collateral * 100000000, values.address)
+          .signAndSend(
+            currentAccount!!.address,
+            { signer: injector.signer },
+            ({ status, dispatchError, events }) => {
+              if (status.isInBlock) {
+                notification["success"]({
+                  message: `Completed at block hash ${status.asInBlock.toString()}`,
+                  duration: 0,
+                });
+              } else if (dispatchError) {
+                if (dispatchError.isModule) {
+                  const decoded = api.registry.findMetaError(
+                    dispatchError.asModule
+                  );
+                  const { documentation, name, section } = decoded;
+                  notification["error"]({
+                    message: `${section}.${name}: ${documentation.join(" ")}`,
+                    duration: 0,
+                  });
+                }
+              } else {
+                notification["success"]({
+                  message: `Current status: ${status.type}`,
+                  duration: 0,
+                });
+                if (status.type === "Finalized") {
+                   setRegVault(true)
+                }
+              }
+            }
+          )
+          .catch((error: any) => {
+            notification["error"]({
+              message: `:( transaction failed', ${error}`,
+              duration: 0,
+            });
+          });
+      }
     return (
+      <div>
+        {regVault ? <VaultCard/> : 
         <RegisterVaultCardStyle>
             <div className={"card-title"}>注册保险库</div>
-            <Form name={"register"} onFinish={onFinish} onFinishFailed={onFinishFailed}>
+            <Form name={"register"} onFinish={onFinish}>
                 <RegisterAccountStyle>
                     <div>{t('Register Account')}</div>
                     <div className={"current-account"}>{currentAccount?.address}</div>
@@ -67,6 +111,8 @@ function RegisterVaultCard() {
                 </Form.Item>
             </Form>
         </RegisterVaultCardStyle>
+        }
+        </div>
     )
 }
 export default RegisterVaultCard;

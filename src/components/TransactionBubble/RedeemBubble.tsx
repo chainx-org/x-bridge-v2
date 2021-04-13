@@ -17,7 +17,7 @@ const RedeemBubble: FC<RedeemBubbleProps> = ({amount,onClick,openTime }) => {
     <li onClick={onClick}>
       <RedeemBubbleStyle>
         <div className={"circle"}>{t('Redeem')}</div>
-        <div className={"btc-amount"}>{(+amount.toString(10)).toFixed(5)} BTC</div>
+        <div className={"btc-amount"}>{(+amount.toString(10)/100000000).toFixed(5)} BTC</div>
         <div className={"remaining-time-title"}>
         {t<string>('Remaining time')}
           <div className={"remaining-time"}>

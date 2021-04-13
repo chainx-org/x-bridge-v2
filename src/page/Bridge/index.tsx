@@ -264,7 +264,7 @@ function Bridge() {
             <div className={"info-title"}>转账金额</div>
             <div className={"transfer-amount"}>
               {issueModalData.length > 0
-                ? (+issueModalData[0].btcAmount.toString(10)).toFixed(5)
+                ? (+issueModalData[0].btcAmount.toString(10)/100000000).toFixed(5)
                 : 0}{" "}
               BTC
             </div>
@@ -301,7 +301,7 @@ function Bridge() {
                 <div className={"title"}>发行数量</div>
                 <div className={"content"}>
                   {issueModalData.length > 0
-                    ? (parseInt(issueModalData[0].btcAmount)).toFixed(5)
+                    ? (parseInt(issueModalData[0].btcAmount)/100000000).toFixed(5)
                     : 0}{" "}
                   XBTC
                 </div>
@@ -360,7 +360,7 @@ function Bridge() {
                 <div className={"content"}>
                   {" "}
                   {RedeemModalData.length > 0
-                    ? (+RedeemModalData[0].amount.toString(10)).toFixed(5)
+                    ? (+RedeemModalData[0].amount.toString(10)/100000000).toFixed(5)
                     : 0}{" "}
                   XBTC
                 </div>
