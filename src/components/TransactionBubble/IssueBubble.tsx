@@ -13,7 +13,7 @@ const IssueBubble: FC<IssueBubbleProps> = ({onClick,BtcAmout}) => {
     <li onClick={onClick}>
       <IssueBubbleStyle>
         <div className={"circle"}>{t('issue')}</div>
-        <div className={"btc-amount"}>{(+BtcAmout.toString(10)).toFixed(5)} XBTC</div>
+        <div className={"btc-amount"}>{(+(BtcAmout.toString(10))/100000000).toFixed(5)} XBTC</div>
         <div>
           <img src={enterLogo} alt="" />
         </div>

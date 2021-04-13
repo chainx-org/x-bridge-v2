@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   ConfirmationIssueModalFooter,
   ConfirmationIssueModalStyle,
@@ -8,20 +8,22 @@ import {
   IssueStyle,
   LockingCollateralStyle,
   VaultAccountStyle,
-  PCXbalanceStyle
+  PCXbalanceStyle,
 } from "./style";
 import btcLogo from "./icons/btc.svg";
 import { InputNumber, Divider, Button, Modal, notification } from "antd";
 import { useTranslation } from "react-i18next";
 import useAccountModel from "../../hooks/useAccountModel";
 import { useApi } from "../../hooks/useApi";
-import { RpcVaultInfo } from "../../interfaces";
+import { BtcAddress, RpcVaultInfo } from "../../interfaces";
 import { FeeContext } from "../../hooks/useFeeContext";
 import { decodeAddress, encodeAddress } from "@polkadot/keyring";
 import ChangeChainXAddress from "../../util";
 import { web3FromAddress } from "@polkadot/extension-dapp";
-import {useAccountInfo} from "../../hooks/useAccountInfo";
+import { useAccountInfo } from "../../hooks/useAccountInfo";
 import FormatBalance from "../../hooks/useFormatBalance";
+import { AccountId } from "@polkadot/types/interfaces";
+
 function Issue() {
   const value = useContext(FeeContext);
   const pcxPrice = value.pcxPrice;
@@ -33,12 +35,15 @@ function Issue() {
   const [vaultAddress, setVaultAddress] = useState("");
   const [vaultBtcAddress, setVaultBtcAddress] = useState("");
   const [vaultButtonLoading, SetVaultButtonLoading] = useState(false);
+  const [vaultInfo, setVaultInfo] = useState();
+  const [vault, SetVault] = useState([]);
+  const [vaultCollateral,setVaultCollateral] = useState()
   const { api, isApiReady } = useApi();
-  const accountInfo = useAccountInfo(currentAccount?.address!!)
+  const accountInfo = useAccountInfo(currentAccount?.address!!);
   async function ConfirmationIssueTrade() {
     const injector = await web3FromAddress(currentAccount!!.address);
     api.tx.xGatewayBitcoinV2
-      .requestIssue(vaultAddress, IssueAmount)
+      .requestIssue(vaultAddress,IssueAmount * 100000000)
       .signAndSend(
         currentAccount!!.address,
         { signer: injector.signer },
@@ -77,26 +82,27 @@ function Issue() {
         });
       });
   }
+
   const handleMatchVault = async () => {
     if (IssueAmount <= 0) {
       notification.warn({ message: "发行的值必须大于0" });
       return;
     }
-    SetVaultButtonLoading(true);
     const vaults = await api.query.xGatewayBitcoinV2.vaults.entries();
-    const result = vaults.find(
-      ([, vault]) =>
-        vault.unwrap().issuedTokens.toNumber() -
-          vault.unwrap().toBeRedeemedTokens.toNumber() >=
-        IssueAmount * 100000000
-    );
+    const results = await Promise.all(
+    vaults.map(async ([key, value]) => {
+      const vault = value.unwrap();
+      const collateral = await (await api.query.system.account(vault.id)).data.reserved;
+      const maxToken = collateral.muln(pcxPrice).divn(3);
+      return [vault.id, maxToken.sub(vault.issuedTokens).sub(vault.toBeIssuedTokens), vault.wallet]
+    }))
     setVaultAddress(
-      result ? ChangeChainXAddress(result[1].unwrap().id.toString()) : ""
+      results ? ChangeChainXAddress(JSON.parse(JSON.stringify(results))[0][0]) : ""
     );
-    setVaultBtcAddress(result ? result[1].unwrap().wallet.toString() : "");
+    setVaultBtcAddress(results ? JSON.parse(JSON.stringify(results))[0][2] : "");
     setConfirmationIssue(true);
     SetVaultButtonLoading(false);
-  };
+  }
   return (
     <IssueStyle>
       <CurrentAccountStyle>
@@ -117,7 +123,9 @@ function Issue() {
         />
         <div className={"btc-title"}>BTC</div>
       </IssueBtcInputStyle>
-      <PCXbalanceStyle>PCX {t('balance')} {FormatBalance(accountInfo?.data.free)}</PCXbalanceStyle>
+      <PCXbalanceStyle>
+        PCX {t("balance")} {FormatBalance(accountInfo?.data.free)}
+      </PCXbalanceStyle>
       <LockingCollateralStyle>
         <div className={"locking-title"}>{t("Locking collateral")}</div>
         <div className={"locking-num"}>
