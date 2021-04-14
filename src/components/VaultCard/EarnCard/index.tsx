@@ -14,7 +14,7 @@ import { AccountId, Balance } from "@polkadot/types/interfaces";
 import { BtcAddress } from "../../../interfaces";
 import { useApi } from "../../../hooks/useApi";
 import { BalanceSpan } from "../../BalanceSpan";
-import { useRatio } from "../../../hooks/useRatio";
+
 import { useFeeContext, FeeContext } from "../../../hooks/useFeeContext";
 import {useAccountInfo} from "../../../hooks/useAccountInfo";
 import FormatBalance from "../../../hooks/useFormatBalance";
@@ -41,7 +41,6 @@ function EarnCard() {
   const { currentAccount } = useAccountModel();
   const { api, isApiReady } = useApi();
 
-  const ratio = useRatio(vault?.issuedToken, vault?.collateral);
   const accountInfo = useAccountInfo(currentAccount?.address!!)
   async function ConfirmationIssueTrade() {
     const injector = await web3FromAddress(currentAccount!!.address);
@@ -155,7 +154,7 @@ function EarnCard() {
         <ul className={"right-ul"}>
           <li>
             <div className={"earn-card-title"}>可发行量</div>
-            <div className={"issuable-num"}>{(((+vault?.collateral!! / 100000000) * pcxPrice)/secureThreshold).toFixed(2)} BTC</div>
+            <div className={"issuable-num"}>{(((+vault?.collateral!! / 100000000) * pcxPrice)/secureThreshold).toFixed(5)} BTC</div>
           </li>
           <li>
             <div className={"earn-card-title"}>抵押品 / 抵押率</div>
@@ -163,7 +162,8 @@ function EarnCard() {
               <div>
                 <BalanceSpan balance={vault?.collateral} />PCX
               </div>
-              <div className={"collateral-rate-num"}>/{ ((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice)).toFixed(5)}%</div>
+              {isFinite(((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice))) ? ((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice)).toFixed(5) : "0"}
+              <div className={"collateral-rate-num"}>/{isFinite(((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice))) ? ((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice)).toFixed(5) : "-"}%</div>
             </div>
           </li>
           <li>
@@ -214,14 +214,15 @@ function EarnCard() {
             <ul>
               <li>
                 <div>当前抵押率</div>
-                <div className={"collateral-num"}>{((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice)).toFixed(5)}%</div>
+                <div className={"collateral-num"}>{isFinite(((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice))) ? ((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice)).toFixed(5) : "-"}%</div>
               </li>
               <li>
                 <img src={arrowLogo} alt="" />
               </li>
               <li>
                 <div>增加后抵押率</div>
-                <div className={"collateral-num before"}>{(((+vault?.collateral!! + addPCX )/ 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice)).toFixed(5)}%</div>
+    
+                <div className={"collateral-num before"}>{isFinite(((+vault?.collateral!! + addPCX )/ 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice)) ? (((+vault?.collateral!! + addPCX )/ 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice)).toFixed(5) : "-"}%</div>
               </li>
             </ul>
           </CollateralDisplayStyle>
