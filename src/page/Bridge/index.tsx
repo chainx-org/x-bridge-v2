@@ -283,7 +283,7 @@ function Bridge() {
             <div className={"title"}>OP_RETURN</div>
             <div className={"address"}>
               {stringToHex(
-                issueModalData.length > 0 ? issueModalData[0].btcAddress : ""
+                issueModalData.length > 0 ? currentAccount?.address : ""
               ).substring(2,99)}
             </div>
           </VaultOpReturnStyle>

@@ -63,31 +63,7 @@ function HistoryCard() {
             dataIndex: "btcAddress",
             ellipsis: true,
             key: "btcAddress"
-        },
-        // {
-        //     title: t<string>("Transaction"),
-        //     dataIndex: "hash",
-        //     key: "hash"
-        // },
-        // {
-        //     title: t<string>("Confirmation"),
-        //     dataIndex: "countedBlock",
-        //     key: "countedBlock"
-        // },
-        // {
-        //     title: t<string>("State"),
-        //     dataIndex: "status",
-        //     key: "status",
-        //     render: (text: string, record: any) => (
-        //         <a
-        //             onClick={() =>
-        //                 record.status === "确认" && console.log('dasda')
-        //             }
-        //         >
-        //             {text}
-        //         </a>
-        //     )
-        // }
+        }
     ]
     return (
         <HistoryCardStyle>

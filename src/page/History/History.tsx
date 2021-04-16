@@ -44,7 +44,7 @@ function History() {
                         id: info._id,
                         amount: info.btcAmount / 100000000,
                         chainxAddr: encodeAddress(decodeAddress(info.requester),44),
-                        vaultBtcAddr: info.vault,
+                        vaultBtcAddr: info.btcAddress,
                         hash: "",
                         countedBlock: 0,
                         status: info.status
@@ -56,7 +56,7 @@ function History() {
                         id: info._id,
                         amount: info.amount / 100000000,
                         chainxAddr: info.requester,
-                        vaultBtcAddr: info.vault,
+                        vaultBtcAddr: info.btcAddress,
                         hash: "",
                         countedBlock: 0,
                         status: info.status
