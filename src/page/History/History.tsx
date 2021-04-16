@@ -29,7 +29,7 @@ function History() {
     useEffect(() => {
         (async () => {
             const response = await fetch(
-                `https://api-btc.chainx.org/xbridge/${
+                `https://api-btc.spiderx.pro/xbridge/${
                     activeTab === HistoryTab.Issue ? "issue_requests" : "redeem_requests"
                 }?page=0&pageSize=5&requester=${currentAccount?.address}`,
                 {

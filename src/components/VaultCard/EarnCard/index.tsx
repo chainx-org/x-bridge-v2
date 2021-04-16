@@ -162,7 +162,7 @@ function EarnCard() {
               <div>
                 <BalanceSpan balance={vault?.collateral} />PCX
               </div>
-              <div className={"collateral-rate-num"}>/{isFinite(((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice))) ? ((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice)) : "-"}%</div>
+              <div className={"collateral-rate-num"}>/{isFinite(((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice))) ? ((+vault?.collateral!! / 100000000) / +((vault?.issuedToken.toNumber()!!/ 1000000000) / pcxPrice)).toFixed(2) : "-"}%</div>
             </div>
           </li>
           <li>
