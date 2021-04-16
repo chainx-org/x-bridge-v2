@@ -17,11 +17,11 @@ function Redeem() {
     const {api, isApiReady} = useApi();
     const {XbtcBalance} = useXbtcAssets(currentAccount?.address!!,n)
     const handleReedem = async()=>{
-        let valid =  WAValidator.validate(BtcAddress,'BTC')
-        if(!valid){
-            notification.warn({message: "请输入合法的BTC地址"});
-            return
-        }
+        // let valid =  WAValidator.validate(BtcAddress,'BTC')
+        // if(!valid){
+        //     notification.warn({message: "请输入合法的BTC地址"});
+        //     return
+        // }
         if(RedeemAmount <= 0){
             notification.warn({message: "赎回的值必须大于0"});
             return
